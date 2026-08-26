@@ -3,8 +3,9 @@
 'require rpc';
 'require poll';
 
-var callFullStatus = rpc.declare({ object: 'rm520n', method: 'full_status', expect: {} });
-var callRefresh    = rpc.declare({ object: 'rm520n', method: 'refresh',     expect: {} });
+var callFullStatus     = rpc.declare({ object: 'rm520n', method: 'full_status',     expect: {} });
+var callRefresh        = rpc.declare({ object: 'rm520n', method: 'refresh',         expect: {} });
+var callResetCounters  = rpc.declare({ object: 'rm520n', method: 'reset_counters',  expect: {} });
 
 var CSS =
     '#rm520n-view{'
@@ -98,6 +99,27 @@ function rsrqColor(rsrq) {
     if (v > -15) return 'var(--lime)';
     if (v > -20) return 'var(--amber)';
     return 'var(--red)';
+}
+
+// Voltage color: only flag dangerous under-voltage. Above-spec-but-working values
+// get default text color — no fake green for values outside the 3.135–3.465V datasheet range.
+function voltageColor(mv) {
+    var v = parseInt(mv);
+    if (isNaN(v)) return 'var(--muted)';
+    if (v < 2800)  return 'var(--red)';
+    if (v < 3000)  return 'var(--orange)';
+    if (v < 3135)  return 'var(--amber)';
+    return 'var(--text)';
+}
+
+function fmtUptime(s) {
+    if (!s) return '—';
+    s = s.trim();
+    var dm = s.match(/(\d+)\s+days?,\s*(\d+):(\d+)/);
+    var hm = s.match(/^(\d+):(\d+)$/);
+    if (dm) return parseInt(dm[1]) + 'd ' + parseInt(dm[2]) + 'h ' + parseInt(dm[3]) + 'm';
+    if (hm) return parseInt(hm[1]) + 'h ' + parseInt(hm[2]) + 'm';
+    return s;
 }
 
 function tempColor(v) {
@@ -234,7 +256,17 @@ function setEl(id, child) {
     }
 }
 
+function fmtRate(bps) {
+    if (isNaN(bps) || bps < 0) return '—';
+    if (bps >= 1048576) return (bps / 1048576).toFixed(2) + ' MB/s';
+    if (bps >= 1024)    return (bps / 1024).toFixed(1)    + ' KB/s';
+    return Math.round(bps) + ' B/s';
+}
+
 // ── Live update (called by 10s poll and manual Refresh Now) ───────────────────
+
+var _prevCounters = null;
+var _prevCountersTime = null;
 
 function updateSignal(d) {
     if (!d) return;
@@ -273,6 +305,27 @@ function updateSignal(d) {
     if (nrSec)  nrSec.style.display  = hasNr ? '' : 'none';
     if (lteLbl) lteLbl.style.display = hasNr ? '' : 'none';
 
+    if (d.supply_mv != null) {
+        var mv = parseInt(d.supply_mv);
+        setEl('modem-voltage', E('span', { 'style': 'color:' + voltageColor(mv) + ';font-weight:600' },
+            (mv / 1000).toFixed(3) + ' V (' + mv + ' mV)'));
+    }
+
+    if (d.modem_tx != null && d.modem_rx != null) {
+        var now = Date.now();
+        if (_prevCounters && _prevCountersTime) {
+            var dt = (now - _prevCountersTime) / 1000;
+            if (dt > 0) {
+                setEl('counter-tx-speed', fmtRate((d.modem_tx - _prevCounters.tx) / dt));
+                setEl('counter-rx-speed', fmtRate((d.modem_rx - _prevCounters.rx) / dt));
+            }
+        }
+        _prevCounters = { tx: d.modem_tx, rx: d.modem_rx };
+        _prevCountersTime = now;
+        setEl('counter-tx', fmtBytes(d.modem_tx));
+        setEl('counter-rx', fmtBytes(d.modem_rx));
+    }
+
     if (d.ca !== undefined) {
         var caBody = document.getElementById('ca-body');
         if (caBody) {
@@ -298,16 +351,21 @@ return view.extend({
         d = d || {};
 
         // Card 1 — Modem identity
+        var supplyMv = parseInt(d.supply_mv);
         var infoCard = E('div', { 'class': 'rm-card' }, [
             E('h3', {}, _('Modem')),
             E('table', { 'class': 'rm-table' }, [
-                row(_('Firmware'),  d.firmware || '—'),
-                row(_('IMEI'),      d.imei     || '—'),
-                row(_('AT Port'),   d.at_port  || '—'),
-                row(_('Operator'),  d.operator || '—'),
-                row(_('MCC / MNC'), d.mcc && d.mnc ? d.mcc + ' / ' + d.mnc : '—'),
-                row(_('LTE Reg'),   cregBadge(d.creg)),
-                row(_('5G NR Reg'), cregBadge(d.c5greg)),
+                row(_('Firmware'),       d.firmware || '—'),
+                row(_('IMEI'),           d.imei     || '—'),
+                row(_('AT Port'),        d.at_port  || '—'),
+                row(_('Uptime'),         fmtUptime(d.uptime)),
+                row(_('Supply Voltage'), E('span', { 'id': 'modem-voltage',
+                    'style': 'color:' + voltageColor(supplyMv) + ';font-weight:600' },
+                    !isNaN(supplyMv) ? (supplyMv / 1000).toFixed(3) + ' V (' + supplyMv + ' mV)' : '—')),
+                row(_('Operator'),       d.operator || '—'),
+                row(_('MCC / MNC'),      d.mcc && d.mnc ? d.mcc + ' / ' + d.mnc : '—'),
+                row(_('LTE Reg'),        cregBadge(d.creg)),
+                row(_('5G NR Reg'),      cregBadge(d.c5greg)),
             ])
         ]);
 
@@ -405,8 +463,23 @@ return view.extend({
         var countersCard = E('div', { 'class': 'rm-card' }, [
             E('h3', {}, _('Data Counters')),
             E('table', { 'class': 'rm-table' }, [
-                row(_('Modem TX'), fmtBytes(d.modem_tx)),
-                row(_('Modem RX'), fmtBytes(d.modem_rx)),
+                row(_('TX'),       E('span', { 'id': 'counter-tx' }, fmtBytes(d.modem_tx))),
+                row(_('RX'),       E('span', { 'id': 'counter-rx' }, fmtBytes(d.modem_rx))),
+                row(_('TX Speed'), E('span', { 'id': 'counter-tx-speed' }, '—')),
+                row(_('RX Speed'), E('span', { 'id': 'counter-rx-speed' }, '—')),
+            ]),
+            E('div', { 'style': 'margin-top:8px' }, [
+                E('button', { 'class': 'rm-btn rm-btn-default',
+                    'click': function() {
+                        callResetCounters().then(function() {
+                            _prevCounters = null;
+                            setEl('counter-tx', '0 B');
+                            setEl('counter-rx', '0 B');
+                            setEl('counter-tx-speed', '—');
+                            setEl('counter-rx-speed', '—');
+                        });
+                    }
+                }, _('Reset Counters'))
             ])
         ]);
 

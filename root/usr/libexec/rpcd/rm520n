@@ -260,6 +260,15 @@ _parse_cops() {
                 | sed 's/.*"\(.*\)".*/\1/' | tr -d '\r')"
 }
 
+# +CBC: <bcs>,<bcl>,<voltage_mv>  (on module, voltage_mv = VBAT supply voltage in mV)
+# Sets global: supply_mv
+_parse_cbc() {
+    local raw="$1" data
+    data="$(printf '%s' "$raw" | grep '^+CBC:' | head -1 \
+            | sed 's/+CBC:[[:space:]]*//' | tr -d ' \r')"
+    supply_mv="$(printf '%s' "$data" | cut -d, -f3)"
+}
+
 # +QGDCNT: tx_bytes,rx_bytes
 # Sets globals: modem_tx modem_rx
 _parse_qgdcnt() {
@@ -354,10 +363,10 @@ _method_full_status() {
     _find_at_port || { printf '{"error":"AT port not found"}'; return; }
     _at_lock      || { printf '{"error":"AT port busy"}';      return; }
 
-    local raw_gmr raw_gsn raw_cereg raw_c5greg raw_cops raw_qcsq raw_qeng
-    local raw_qnwinfo raw_qrsrp raw_qcainfo raw_qtemp raw_qgdcnt
+    local raw_qgmr raw_gsn raw_cereg raw_c5greg raw_cops raw_qcsq raw_qeng
+    local raw_qnwinfo raw_qrsrp raw_qcainfo raw_qtemp raw_qgdcnt raw_quptime raw_cbc
     local raw_lte raw_nr raw_mode
-    local fw imei cereg_raw c5greg_raw qcsq_raw lte_bands nr_bands mode
+    local fw imei cereg_raw c5greg_raw qcsq_raw lte_bands nr_bands mode supply_mv uptime_str
     local tech rssi rsrp sinr rsrq
     local qeng_rrc qeng_rat qeng_duplex qeng_mcc qeng_mnc
     local qeng_cell_id qeng_pci qeng_earfcn qeng_band qeng_tac
@@ -372,7 +381,7 @@ _method_full_status() {
     exec 3<>"$AT_PORT"
     _drain_at_port
 
-    raw_gmr="$(    _at_seq 'AT+GMR')"
+    raw_qgmr="$(   _at_seq 'AT+QGMR')"
     raw_gsn="$(    _at_seq 'AT+GSN')"
                    _at_seq 'AT+CEREG=2' >/dev/null
     raw_cereg="$(  _at_seq 'AT+CEREG?')"
@@ -385,6 +394,8 @@ _method_full_status() {
     raw_qcainfo="$(_at_seq 'AT+QCAINFO')"
     raw_qtemp="$(  _at_seq 'AT+QTEMP')"
     raw_qgdcnt="$( _at_seq 'AT+QGDCNT?')"
+    raw_quptime="$(_at_seq 'AT+QUPTIME')"
+    raw_cbc="$(    _at_seq 'AT+CBC')"
     raw_lte="$(    _at_seq 'AT+QNWPREFCFG="lte_band"')"
     raw_nr="$(     _at_seq 'AT+QNWPREFCFG="nr5g_band"')"
     raw_mode="$(   _at_seq 'AT+QNWPREFCFG="mode_pref"')"
@@ -392,7 +403,7 @@ _method_full_status() {
     exec 3>&-
     _at_unlock
 
-    fw="$(        printf '%s' "$raw_gmr"    | grep -E '^RM'        | head -1 | tr -d '\r')"
+    fw="$(        printf '%s' "$raw_qgmr"   | grep -E '^RM'        | head -1 | tr -d '\r')"
     imei="$(      printf '%s' "$raw_gsn"    | grep -E '^[0-9]{15}' | head -1 | tr -d '\r')"
     cereg_raw="$( printf '%s' "$raw_cereg"  | grep '+CEREG:'       | head -1 | tr -d '\r')"
     c5greg_raw="$(printf '%s' "$raw_c5greg" | grep '+C5GREG:'      | head -1 | tr -d '\r')"
@@ -408,6 +419,9 @@ _method_full_status() {
     _parse_cereg   "$raw_cereg"
     _parse_cops    "$raw_cops"
     _parse_qgdcnt  "$raw_qgdcnt"
+    _parse_cbc     "$raw_cbc"
+    uptime_str="$(printf '%s' "$raw_quptime" | grep '^+QUPTIME:' | head -1 \
+                  | sed 's/.*up //' | sed 's/,[[:space:]]*load.*//' | tr -d '\r')"
     pcc_pci="$(printf '%s' "$raw_qcainfo" | grep '^+QCAINFO' | head -1 \
                | sed 's/+QCAINFO:[[:space:]]*//' | tr -d '"' | cut -d, -f6 | tr -d ' \r')"
     creg="$(      _parse_reg_stat "$cereg_raw")"
@@ -419,6 +433,8 @@ _method_full_status() {
     printf '"firmware":%s,'    "$(_json_str "$fw")"
     printf '"imei":%s,'        "$(_json_str "$imei")"
     printf '"at_port":%s,'     "$(_json_str "$AT_PORT")"
+    printf '"uptime":%s,'      "$(_json_str "$uptime_str")"
+    printf '"supply_mv":%s,'   "$(_json_num "$supply_mv")"
     printf '"creg":%s,'        "$(_json_str "$creg")"
     printf '"c5greg":%s,'      "$(_json_str "$c5greg")"
     printf '"operator":%s,'    "$(_json_str "$operator")"
@@ -462,7 +478,7 @@ _method_refresh() {
     _find_at_port || { printf '{"error":"AT port not found"}'; return; }
     _at_lock      || { printf '{"error":"AT port busy"}';      return; }
 
-    local raw_qcsq raw_qeng raw_qrsrp raw_qnwinfo raw_qcainfo qcsq_raw
+    local raw_qcsq raw_qeng raw_qrsrp raw_qnwinfo raw_qcainfo raw_qgdcnt raw_cbc qcsq_raw
     local tech rssi rsrp sinr rsrq
     local qeng_rrc qeng_rat qeng_duplex qeng_mcc qeng_mnc
     local qeng_cell_id qeng_pci qeng_earfcn qeng_band qeng_tac
@@ -470,7 +486,7 @@ _method_refresh() {
     local rsrp_rx0 rsrp_rx1 rsrp_rx2 rsrp_rx3
     local rsrp_nr_rx0 rsrp_nr_rx1 rsrp_nr_rx2 rsrp_nr_rx3
     local qnwinfo_rat qnwinfo_duplex qnwinfo_mcc qnwinfo_mnc qnwinfo_band qnwinfo_earfcn
-    local pcc_pci ca_json
+    local modem_tx modem_rx supply_mv pcc_pci ca_json
 
     stty -F "$AT_PORT" -opost -onlcr -icrnl -icanon -ixon -ixoff -hupcl -echo min 0 time 3 2>/dev/null || true
     exec 3<>"$AT_PORT"
@@ -481,6 +497,8 @@ _method_refresh() {
     raw_qnwinfo="$(_at_seq 'AT+QNWINFO')"
     raw_qcainfo="$(_at_seq 'AT+QCAINFO')"
     raw_qrsrp="$(  _at_seq 'AT+QRSRP')"
+    raw_qgdcnt="$( _at_seq 'AT+QGDCNT?')"
+    raw_cbc="$(    _at_seq 'AT+CBC')"
 
     exec 3>&-
     _at_unlock
@@ -491,6 +509,8 @@ _method_refresh() {
     _parse_qeng    "$raw_qeng"
     _parse_qnwinfo "$raw_qnwinfo"
     _parse_qrsrp   "$raw_qrsrp"
+    _parse_qgdcnt  "$raw_qgdcnt"
+    _parse_cbc     "$raw_cbc"
     pcc_pci="$(printf '%s' "$raw_qcainfo" | grep '^+QCAINFO' | head -1 \
                | sed 's/+QCAINFO:[[:space:]]*//' | tr -d '"' | cut -d, -f6 | tr -d ' \r')"
     ca_json="$(_build_ca_json "$raw_qcainfo")"
@@ -517,6 +537,9 @@ _method_refresh() {
     printf '"rsrp_nr_rx1":%s,'   "$(_json_num "$rsrp_nr_rx1")"
     printf '"rsrp_nr_rx2":%s,'   "$(_json_num "$rsrp_nr_rx2")"
     printf '"rsrp_nr_rx3":%s,'   "$(_json_num "$rsrp_nr_rx3")"
+    printf '"modem_tx":%s,'      "$(_json_num "$modem_tx")"
+    printf '"modem_rx":%s,'      "$(_json_num "$modem_rx")"
+    printf '"supply_mv":%s,'     "$(_json_num "$supply_mv")"
     printf '"ca":%s'             "$ca_json"
     printf '}'
 }
@@ -527,7 +550,7 @@ _method_status() {
     _find_at_port || { printf '{"error":"AT port not found"}'; return; }
     _at_lock      || { printf '{"error":"AT port busy"}';      return; }
     local fw imei creg_raw c5greg_raw creg c5greg
-    fw="$(       _at "AT+GMR"     | grep -E '^RM'        | head -1 | tr -d '\r')"
+    fw="$(       _at "AT+QGMR"    | grep -E '^RM'        | head -1 | tr -d '\r')"
     imei="$(     _at "AT+GSN"     | grep -E '^[0-9]{15}' | head -1 | tr -d '\r')"
     creg_raw="$( _at "AT+CREG?"  | grep '+CREG:'         | head -1 | tr -d '\r')"
     c5greg_raw="$(_at "AT+C5GREG?" | grep '+C5GREG:'     | head -1 | tr -d '\r')"
@@ -623,6 +646,14 @@ _method_reset_bands() {
     printf '{"result":"ok"}'
 }
 
+_method_reset_counters() {
+    _find_at_port || { printf '{"error":"AT port not found"}'; return; }
+    _at_lock      || { printf '{"error":"AT port busy"}';      return; }
+    _at 'AT+QGDCNT=0,0' >/dev/null
+    _at_unlock
+    printf '{"result":"ok"}'
+}
+
 _method_reconnect() {
     _find_at_port || { printf '{"error":"AT port not found"}'; return; }
     _at_lock      || { printf '{"error":"AT port busy"}';      return; }
@@ -689,7 +720,7 @@ _jf() { printf '%s' "$_RPC_BODY" | jsonfilter -e "$1" 2>/dev/null; }
 
 case "$1" in
     list)
-        printf '{"full_status":{},"refresh":{},"status":{},"signal":{},"cell":{},"bands":{},"set_bands":{"lte_band":"","nr_band":""},"reset_bands":{},"reconnect":{},"set_mode":{"mode":""},"reboot_modem":{},"set_apn":{"apn":""},"get_config":{},"set_config":{"enabled":"","ping_host":"","fail_threshold":"","action":""}}'
+        printf '{"full_status":{},"refresh":{},"status":{},"signal":{},"cell":{},"bands":{},"set_bands":{"lte_band":"","nr_band":""},"reset_bands":{},"reset_counters":{},"reconnect":{},"set_mode":{"mode":""},"reboot_modem":{},"set_apn":{"apn":""},"get_config":{},"set_config":{"enabled":"","ping_host":"","fail_threshold":"","action":""}}'
         ;;
     call)
         case "$2" in
@@ -700,7 +731,8 @@ case "$1" in
             cell)          _method_cell ;;
             bands)         _method_bands ;;
             set_bands)     _method_set_bands "$(_jf '@.lte_band')" "$(_jf '@.nr_band')" ;;
-            reset_bands)   _method_reset_bands ;;
+            reset_bands)     _method_reset_bands ;;
+            reset_counters)  _method_reset_counters ;;
             reconnect)     _method_reconnect ;;
             set_mode)      _method_set_mode "$(_jf '@.mode')" ;;
             reboot_modem)  _method_reboot_modem ;;
