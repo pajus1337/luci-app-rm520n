@@ -68,6 +68,13 @@ The installer copies files directly to the router filesystem — no OpenWrt buil
 After installation, open LuCI and navigate to:
 **Network → 5G Modem (RM520N)**
 
+**Uninstall** (stops the watchdog and removes the panel; settings in `/etc/config/rm520n` are kept):
+```sh
+sh install.sh --uninstall
+# or
+wget -qO- https://raw.githubusercontent.com/pajus1337/luci-app-rm520n/main/install.sh | sh -s -- --uninstall
+```
+
 ---
 
 ## Architecture
@@ -192,9 +199,15 @@ Expected — this app doesn't use that interface at all. It talks to the modem o
 
 | Component | Tested version |
 |---|---|
-| OpenWrt | 25.12.3 |
+| OpenWrt | 25.12.3, 25.12.6 |
 | Modem firmware | RM520NGLAAR03A03M4G |
 | LuCI | 26.x (OpenWrt 25.12 default) |
+
+> **Firmware upgrades:** `install.sh` adds the panel files to `/etc/sysupgrade.conf`, so they and
+> `/etc/config/rm520n` survive a `sysupgrade` with "keep settings", with or without extroot.
+> A stock image does not include `coreutils-stty` or the modem's USB serial driver, so after the
+> upgrade reinstall them: `apk update && apk add coreutils-stty kmod-usb-serial-option`. The watchdog is intentionally left stopped until you start it, because without the AT
+> port it could only escalate blindly: `/etc/init.d/rm520n-watchdog enable && /etc/init.d/rm520n-watchdog start`.
 
 ---
 

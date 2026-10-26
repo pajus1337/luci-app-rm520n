@@ -2,12 +2,23 @@
 # luci-app-rm520n — direct installer for OpenWrt 25.12
 # Copies files directly to the router filesystem (no build system needed).
 #
-# Usage (local):  sh install.sh
+# Usage (local):  sh install.sh [--uninstall]
 # Usage (remote): curl -fsSL https://raw.githubusercontent.com/pajus1337/luci-app-rm520n/main/install.sh | sh
 
 set -e
 
 REPO_URL="https://raw.githubusercontent.com/pajus1337/luci-app-rm520n/main"
+SYSUPGRADE_CONF="/etc/sysupgrade.conf"
+PANEL_FILES="
+/usr/libexec/rpcd/rm520n
+/usr/share/luci/menu.d/rm520n.json
+/usr/share/rpcd/acl.d/rm520n.json
+/www/luci-static/resources/view/rm520n/overview.js
+/www/luci-static/resources/view/rm520n/tools.js
+/www/luci-static/resources/view/rm520n/settings.js
+/usr/sbin/rm520n-watchdog
+/etc/init.d/rm520n-watchdog
+"
 INSTALL_DIR=""
 REMOTE_MODE=0
 
@@ -115,6 +126,43 @@ EOF
     /etc/init.d/rm520n-watchdog enable 2>/dev/null || true
 }
 
+# The watchdog's enable symlink is deliberately not kept: after a sysupgrade
+# the modem's USB serial driver is gone until reinstalled, and a watchdog
+# without its AT port could only escalate blindly.
+_keep_on_upgrade() {
+    local f
+    touch "$SYSUPGRADE_CONF"
+    for f in $PANEL_FILES; do
+        grep -qxF "$f" "$SYSUPGRADE_CONF" || printf '%s\n' "$f" >> "$SYSUPGRADE_CONF"
+    done
+}
+
+_uninstall() {
+    local f tmp
+    printf '\n[luci-app-rm520n] Removing RM520NGL LuCI panel\n\n'
+    [ "$(id -u)" -eq 0 ] || { printf 'ERROR: run as root\n' >&2; exit 1; }
+
+    /etc/init.d/rm520n-watchdog stop 2>/dev/null || true
+    /etc/init.d/rm520n-watchdog disable 2>/dev/null || true
+    for f in $PANEL_FILES; do
+        rm -f "$f"
+    done
+    rmdir /www/luci-static/resources/view/rm520n 2>/dev/null || true
+
+    if [ -f "$SYSUPGRADE_CONF" ]; then
+        tmp="${SYSUPGRADE_CONF}.rm520n.$$"
+        printf '%s\n' $PANEL_FILES > "${tmp}.list"
+        grep -vxF -f "${tmp}.list" "$SYSUPGRADE_CONF" > "$tmp" || true
+        cat "$tmp" > "$SYSUPGRADE_CONF"
+        rm -f "$tmp" "${tmp}.list"
+    fi
+
+    /etc/init.d/rpcd reload 2>/dev/null || true
+    rm -rf /tmp/luci-indexcache /tmp/luci-modulecache 2>/dev/null || true
+
+    printf '[OK] Panel removed. Settings kept in /etc/config/rm520n (delete it to remove them too).\n\n'
+}
+
 _ensure_deps() {
     command -v stty >/dev/null 2>&1 && return 0
     printf '[INFO] stty not found — installing coreutils-stty (required for AT port)...\n'
@@ -128,6 +176,12 @@ _ensure_deps() {
 }
 
 main() {
+    if [ "${1:-}" = "--uninstall" ]; then
+        _uninstall
+        [ "$REMOTE_MODE" = "1" ] && rm -rf "$INSTALL_DIR"
+        return 0
+    fi
+
     printf '\n[luci-app-rm520n] Installing RM520NGL LuCI panel\n\n'
 
     [ "$(id -u)" -eq 0 ] || { printf 'ERROR: run as root\n' >&2; exit 1; }
@@ -140,6 +194,7 @@ main() {
     fi
 
     _install_files "$INSTALL_DIR"
+    _keep_on_upgrade
 
     printf '[INFO] Reloading rpcd...\n'
     /etc/init.d/rpcd reload 2>/dev/null || true
@@ -150,7 +205,8 @@ main() {
     [ "$REMOTE_MODE" = "1" ] && rm -rf "$INSTALL_DIR"
 
     printf '\n[OK] Installation complete.\n'
-    printf '     Open LuCI → Network → 5G Modem (RM520N)\n\n'
+    printf '     Open LuCI → Network → 5G Modem (RM520N)\n'
+    printf '     Panel files are kept across firmware upgrades (%s).\n\n' "$SYSUPGRADE_CONF"
 }
 
 main "$@"
