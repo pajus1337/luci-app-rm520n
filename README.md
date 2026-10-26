@@ -192,9 +192,14 @@ Expected — this app doesn't use that interface at all. It talks to the modem o
 
 | Component | Tested version |
 |---|---|
-| OpenWrt | 25.12.3 |
+| OpenWrt | 25.12.3, 25.12.6 |
 | Modem firmware | RM520NGLAAR03A03M4G |
 | LuCI | 26.x (OpenWrt 25.12 default) |
+
+> **Firmware upgrades:** the panel is installed as plain files, not as a package, so a `sysupgrade`
+> removes them while `/etc/config/rm520n` is kept. After upgrading, run `install.sh` again
+> (your watchdog settings are preserved) and start the watchdog if it was enabled:
+> `/etc/init.d/rm520n-watchdog start`.
 
 ---
 
