@@ -64,18 +64,18 @@ var CSS =
     + '.rm-events td:nth-child(2){white-space:nowrap}';
 
 var ACTION_LABELS = {
-    'reconnect':     'Reconnect only (CFUN=4→1, ~5 s)',
-    'reboot_modem':  'Reboot modem (AT+CFUN=1,1, ~40-45 s)',
-    'cascade':       'Cascade: reconnect → reboot modem → reboot router',
-    'reboot_router': 'Reboot router (full OpenWrt restart, ~60 s)',
-    'monitor':       'Monitor only (log incidents, no recovery action)'
+    'reconnect':     _('Reconnect only (CFUN=4→1, ~5 s)'),
+    'reboot_modem':  _('Reboot modem (AT+CFUN=1,1, ~40-45 s)'),
+    'cascade':       _('Cascade: reconnect → reboot modem → reboot router'),
+    'reboot_router': _('Reboot router (full OpenWrt restart, ~60 s)'),
+    'monitor':       _('Monitor only (log incidents, no recovery action)')
 };
 
 var VERDICT_LABELS = {
-    'modem_unreachable': 'Modem/board unreachable',
-    'no_route':          'No default route',
-    'wwan_down':         'Mobile data down',
-    'target_only':       'Only primary host unreachable'
+    'modem_unreachable': _('Modem/board unreachable'),
+    'no_route':          _('No default route'),
+    'wwan_down':         _('Mobile data down'),
+    'target_only':       _('Only primary host unreachable')
 };
 
 function parseEvent(line) {
@@ -103,7 +103,7 @@ function fmtDuration(sec) {
     return Math.floor(s / 3600) + ' h ' + Math.floor((s % 3600) / 60) + ' min';
 }
 
-function verdictLabel(v) { return _(VERDICT_LABELS[v] || v || '?'); }
+function verdictLabel(v) { return VERDICT_LABELS[v] || v || '?'; }
 
 function cellSig(kv) {
     return [kv.tech, kv.band, kv.pci, kv.cell].join('|');
@@ -111,8 +111,8 @@ function cellSig(kv) {
 
 function cellText(kv) {
     if (kv.modem) return _('modem did not answer');
-    var parts = [ (kv.tech || '?') + ' band ' + (kv.band || '?'),
-        'PCI ' + (kv.pci || '?'), 'cell ' + (kv.cell || '?') ];
+    var parts = [ _('%s band %s').format(kv.tech || '?', kv.band || '?'),
+        'PCI ' + (kv.pci || '?'), _('cell %s').format(kv.cell || '?') ];
     if (kv.scc && kv.scc !== 'none') parts.push('SCC ' + kv.scc);
     if (kv.rsrp) parts.push('RSRP ' + kv.rsrp + ' dBm, SINR ' + (kv.sinr || '?') + ' dB');
     return parts.join(', ');
@@ -130,7 +130,7 @@ function analyseEvents(lines) {
         var recent = e.t >= since;
         switch (e.type) {
         case 'incident_start':
-            e.label = _('Outage') + ': ' + verdictLabel(e.kv.verdict);
+            e.label = _('Outage: %s').format(verdictLabel(e.kv.verdict));
             e.cls = e.kv.verdict === 'target_only' ? 'rm-status-warn' : 'rm-status-err';
             e.details = cellText(e.kv);
             if (recent && e.kv.verdict === 'target_only') sum.targetOnly++;
@@ -142,7 +142,7 @@ function analyseEvents(lines) {
         case 'incident_end':
             e.label = _('Recovered');
             e.cls = 'rm-status-ok';
-            e.details = verdictLabel(e.kv.verdict) + ', ' + _('after') + ' ' + fmtDuration(e.kv.duration);
+            e.details = _('%s, after %s').format(verdictLabel(e.kv.verdict), fmtDuration(e.kv.duration));
             if (recent && e.kv.verdict !== 'target_only') sum.outageSec += parseInt(e.kv.duration) || 0;
             break;
         case 'cell':
@@ -162,7 +162,7 @@ function analyseEvents(lines) {
         case 'action_skipped':
             e.label = _('Action skipped');
             e.cls = 'rm-status-off';
-            e.details = (e.kv.action || '?') + ': ' + _('no modem AT port');
+            e.details = _('%s: no modem AT port').format(e.kv.action || '?');
             break;
         default:
             e.label = e.type;
@@ -240,10 +240,10 @@ function fmtRelativeTime(epochSec) {
     var t = parseInt(epochSec);
     if (!t) return _('never');
     var d = Math.max(0, Math.floor(Date.now() / 1000) - t);
-    if (d < 60) return d + _('s ago');
-    if (d < 3600) return Math.floor(d / 60) + _('m ago');
-    if (d < 86400) return Math.floor(d / 3600) + _('h ago');
-    return Math.floor(d / 86400) + _('d ago');
+    if (d < 60) return _('%ds ago').format(d);
+    if (d < 3600) return _('%dm ago').format(Math.floor(d / 60));
+    if (d < 86400) return _('%dh ago').format(Math.floor(d / 3600));
+    return _('%dd ago').format(Math.floor(d / 86400));
 }
 
 function buildHistoryBlock(history) {
@@ -276,11 +276,11 @@ function statusText(wd) {
     var ivl   = parseInt(wd.interval) || 10;
     if (fails === 0) {
         return E('span', { 'class': 'rm-status-ok' },
-            _('Active - polling every ') + ivl + 's, no failures');
+            _('Active - polling every %ds, no failures').format(ivl));
     }
     var cls = fails >= thr ? 'rm-status-err' : 'rm-status-warn';
     return E('span', { 'class': cls },
-        fails + ' / ' + thr + ' ' + _('consecutive failures'));
+        _('%d / %d consecutive failures').format(fails, thr));
 }
 
 function makeSelect(id, options, current) {
@@ -393,12 +393,10 @@ return view.extend({
                 E('tr', {}, [
                     E('td', {}, _('Fail threshold')),
                     E('td', {}, [
-                        makeSelect('wd-threshold', [
-                            { v: '2',  l: '2 ' + _('consecutive failures') },
-                            { v: '3',  l: '3 ' + _('consecutive failures') },
-                            { v: '5',  l: '5 ' + _('consecutive failures') },
-                            { v: '10', l: '10 ' + _('consecutive failures') }
-                        ], curThresh),
+                        makeSelect('wd-threshold', [ 2, 3, 5, 10 ].map(function(n) {
+                            return { v: String(n),
+                                l: N_(n, '%d consecutive failure', '%d consecutive failures').format(n) };
+                        }), curThresh),
                         E('div', { 'class': 'rm-hint' },
                             _('Example: 10 s × 3 = ~30 s minimum; each failed check can add a few seconds more.'))
                     ])
@@ -483,12 +481,10 @@ return view.extend({
                                     hi.appendChild(buildHistoryBlock(w.history));
                                 }
                                 ui.addNotification(null,
-                                    E('p', _('Saved - enabled: ') + (String(w.enabled) === '1' ? _('yes') : _('no'))
-                                        + ', host: ' + (w.ping_host || '8.8.8.8')
-                                        + ', second host: ' + (w.ping_host2 || '1.1.1.1')
-                                        + ', every: ' + (w.interval || 10) + 's'
-                                        + ', threshold: ' + (w.fail_threshold || 3)
-                                        + ', action: ' + (w.action || 'reboot_modem')),
+                                    E('p', _('Saved - enabled: %s, host: %s, second host: %s, every: %ss, threshold: %s, action: %s').format(
+                                        String(w.enabled) === '1' ? _('yes') : _('no'),
+                                        w.ping_host || '8.8.8.8', w.ping_host2 || '1.1.1.1',
+                                        w.interval || 10, w.fail_threshold || 3, w.action || 'reboot_modem')),
                                     'info');
                                 return refreshEvents();
                             });

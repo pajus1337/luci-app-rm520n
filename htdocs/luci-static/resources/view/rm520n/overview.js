@@ -63,7 +63,7 @@ var TEMP_LABELS = {
     'modem-lte-sub6-pa1': 'PA1 (LTE)',
     'modem-lte-sub6-pa2': 'PA2 (LTE)',
     'modem-mmw0':         'PA (mmWave)',
-    'modem-ambient-usr':  'Ambient',
+    'modem-ambient-usr':  _('Ambient'),
     'aoss-0-usr':         'SoC AOSS',
     'cpuss-0-usr':        'CPU',
     'mdmq6-0-usr':        'DSP (Q6)',
@@ -164,7 +164,7 @@ function buildCellIdBlock(d) {
                 E('span', { 'class': 'rm-cell-id-dec' }, '(' + ciDec + ')')
             ]),
             E('div', { 'class': 'rm-cell-id-meta' }, [
-                'eNB ' + enbId + ' · Sector ' + sector,
+                _('eNB %d · Sector %d').format(enbId, sector),
                 cmUrl ? E('a', {
                     'class': 'rm-cell-id-link', 'href': cmUrl, 'target': '_blank'
                 }, '↗ CellMapper') : null

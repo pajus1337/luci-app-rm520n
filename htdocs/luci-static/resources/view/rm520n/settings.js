@@ -100,7 +100,7 @@ return view.extend({
                     'click': function() {
                         var m = document.getElementById('mode-select').value;
                         callSetMode(m).then(function() {
-                            ui.addNotification(null, E('p', _('Mode set to: ') + m), 'info');
+                            ui.addNotification(null, E('p', _('Mode set to: %s').format(m)), 'info');
                         });
                     }
                 }, _('Apply Mode')),
@@ -168,13 +168,13 @@ return view.extend({
             E('h3', {}, _('APN')),
             E('div', { 'class': 'rm-controls' }, [
                 E('input', { 'id': 'apn-input', 'type': 'text',
-                    'class': 'rm-input', 'placeholder': 'e.g. internet' }),
+                    'class': 'rm-input', 'placeholder': _('e.g. internet') }),
                 E('button', { 'class': 'rm-btn rm-btn-primary',
                     'click': function() {
                         var apn = document.getElementById('apn-input').value.trim();
                         if (!apn) return;
                         callSetApn(apn).then(function() {
-                            ui.addNotification(null, E('p', _('APN set to: ') + apn), 'info');
+                            ui.addNotification(null, E('p', _('APN set to: %s').format(apn)), 'info');
                         });
                     }
                 }, _('Set APN')),

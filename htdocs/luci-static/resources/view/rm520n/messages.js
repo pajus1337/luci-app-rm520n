@@ -220,8 +220,8 @@ function buildInbox(res) {
     }
     var msgs = buildMessages(res.messages);
     var head = E('div', { 'class': 'rm-hint' },
-        _('Storage') + ' ' + (res.storage || '?') + ': ' + (res.used != null ? res.used : '?')
-        + ' / ' + (res.total != null ? res.total : '?') + ' ' + _('used'));
+        _('Storage %s: %s / %s used').format(res.storage || '?',
+            res.used != null ? res.used : '?', res.total != null ? res.total : '?'));
     if (!msgs.length) {
         return E('div', {}, [ head, E('div', { 'class': 'rm-empty', 'style': 'margin-top:8px' }, _('No messages.')) ]);
     }
@@ -230,7 +230,7 @@ function buildInbox(res) {
         if (m.unread) badges.push(E('span', { 'class': 'rm-badge rm-badge-new' }, _('new')));
         if (m.parts < m.total) {
             badges.push(E('span', { 'class': 'rm-badge rm-badge-warn' },
-                _('incomplete') + ' ' + m.parts + '/' + m.total));
+                _('incomplete %d/%d').format(m.parts, m.total)));
         }
         return E('div', { 'class': 'rm-sms' + (m.unread ? ' rm-sms-new' : '') }, [
             E('div', { 'class': 'rm-sms-head' }, [
