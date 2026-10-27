@@ -111,6 +111,22 @@ LuCI browser (JavaScript view)
 | `root/etc/init.d/rm520n-watchdog` | procd init script for the watchdog daemon |
 | `root/usr/share/luci/menu.d/rm520n.json` | Registers the page under Network menu |
 | `root/usr/share/rpcd/acl.d/rm520n.json` | rpcd access control list |
+| `po/` | Translation template (`templates/rm520n.pot`) and catalogs (`de`, `pl`, `zh_Hans`) |
+
+---
+
+## Translations
+
+The UI is written in English. German and Polish catalogs are complete, Simplified Chinese is
+partial. LuCI shows a translation only when the matching LuCI language is installed and selected
+(`luci-i18n-base-de`, `luci-i18n-base-pl`, ...); otherwise everything stays in English.
+
+The catalogs are compiled to `.lmo` files when the package is built with the OpenWrt SDK
+(`luci-i18n-rm520n-<lang>`). `install.sh` does not install translations yet.
+
+To add or update a language, regenerate `po/templates/rm520n.pot` from the sources (LuCI's
+`build/i18n-scan.pl`) and merge it into `po/<lang>/rm520n.po`. Keep `%s`/`%d` placeholders as
+they are.
 
 ---
 

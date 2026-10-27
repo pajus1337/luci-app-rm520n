@@ -5,169 +5,620 @@
 msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Language: zh_Hans\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid "Poor"
-msgstr "信号极差"
+#: htdocs/luci-static/resources/view/rm520n/tools.js:283
+msgid "%d / %d consecutive failures"
+msgstr ""
 
-msgid "Fair"
-msgstr "信号较弱"
+#: htdocs/luci-static/resources/view/rm520n/tools.js:398
+msgid "%d consecutive failure"
+msgid_plural "%d consecutive failures"
+msgstr[0] ""
 
-msgid "Good"
-msgstr "信号良好"
+#: htdocs/luci-static/resources/view/rm520n/tools.js:246
+msgid "%dd ago"
+msgstr ""
 
-msgid "Very Good"
-msgstr "信号很好"
+#: htdocs/luci-static/resources/view/rm520n/tools.js:245
+msgid "%dh ago"
+msgstr ""
 
-msgid "Excellent"
-msgstr "信号极佳"
+#: htdocs/luci-static/resources/view/rm520n/tools.js:244
+msgid "%dm ago"
+msgstr ""
 
-msgid "Modem"
-msgstr "调制解调器"
+#: htdocs/luci-static/resources/view/rm520n/tools.js:243
+msgid "%ds ago"
+msgstr ""
 
-msgid "Firmware"
-msgstr "固件版本"
+#: htdocs/luci-static/resources/view/rm520n/tools.js:114
+msgid "%s band %s"
+msgstr ""
 
-msgid "IMEI"
-msgstr "IMEI"
+#: htdocs/luci-static/resources/view/rm520n/tools.js:145
+msgid "%s, after %s"
+msgstr ""
 
-msgid "AT Port"
-msgstr "AT 端口"
+#: htdocs/luci-static/resources/view/rm520n/tools.js:165
+msgid "%s: no modem AT port"
+msgstr ""
 
-msgid "Operator"
-msgstr "运营商"
+#: root/usr/share/luci/menu.d/rm520n.json
+msgid "5G Modem (RM520N)"
+msgstr ""
 
-msgid "MCC / MNC"
-msgstr "MCC / MNC"
-
-msgid "LTE Reg"
-msgstr "LTE 注册"
-
+#: htdocs/luci-static/resources/view/rm520n/overview.js:367
 msgid "5G NR Reg"
 msgstr "5G NR 注册"
 
-msgid "Signal"
-msgstr "信号"
+#: htdocs/luci-static/resources/view/rm520n/messages.js:274
+msgid "A USSD code may only contain digits, * and #."
+msgstr ""
 
-msgid "Cell Info"
-msgstr "小区信息"
+#: htdocs/luci-static/resources/view/rm520n/tools.js:163
+msgid "Action skipped"
+msgstr ""
 
-msgid "RRC State"
-msgstr "RRC 状态"
+#: htdocs/luci-static/resources/view/rm520n/tools.js:279
+msgid "Active - polling every %ds, no failures"
+msgstr ""
 
-msgid "Band"
-msgstr "频段"
-
-msgid "Duplex"
-msgstr "双工模式"
-
-msgid "EARFCN"
-msgstr "EARFCN"
-
-msgid "PCI"
-msgstr "PCI"
-
-msgid "Cell ID"
-msgstr "小区 ID"
-
-msgid "TAC"
-msgstr "TAC"
-
-msgid "Carrier Aggregation"
-msgstr "载波聚合"
-
-msgid "Per-Antenna RSRP"
-msgstr "各天线 RSRP"
-
-msgid "Temperature"
-msgstr "温度"
-
-msgid "Data Counters"
-msgstr "数据统计"
-
-msgid "Modem TX"
-msgstr "调制解调器发送"
-
-msgid "Modem RX"
-msgstr "调制解调器接收"
-
-msgid "Band Configuration"
-msgstr "频段配置"
-
-msgid "Network Mode"
-msgstr "网络模式"
-
-msgid "Mode set to: "
-msgstr "网络模式已设置为："
-
-msgid "Apply Mode"
-msgstr "应用模式"
-
-msgid "LTE Bands"
-msgstr "LTE 频段"
-
+#: htdocs/luci-static/resources/view/rm520n/settings.js:114
+#: htdocs/luci-static/resources/view/rm520n/settings.js:147
 msgid "All"
 msgstr "全选"
 
-msgid "None"
-msgstr "全不选"
-
-msgid "LTE bands applied."
-msgstr "LTE 频段已应用。"
-
-msgid "Apply LTE"
-msgstr "应用 LTE"
-
-msgid "Reset All Bands"
-msgstr "重置所有频段"
-
+#: htdocs/luci-static/resources/view/rm520n/settings.js:136
 msgid "All bands restored."
 msgstr "所有频段已恢复。"
 
-msgid "NR Bands"
-msgstr "NR 频段"
+#: htdocs/luci-static/resources/view/rm520n/overview.js:66
+msgid "Ambient"
+msgstr ""
 
-msgid "NR bands applied."
-msgstr "NR 频段已应用。"
+#: htdocs/luci-static/resources/view/rm520n/settings.js:168
+msgid "APN"
+msgstr ""
 
+#: htdocs/luci-static/resources/view/rm520n/settings.js:177
+msgid "APN set to: %s"
+msgstr "APN 已设置为：%s"
+
+#: htdocs/luci-static/resources/view/rm520n/settings.js:130
+msgid "Apply LTE"
+msgstr "应用 LTE"
+
+#: htdocs/luci-static/resources/view/rm520n/settings.js:106
+msgid "Apply Mode"
+msgstr "应用模式"
+
+#: htdocs/luci-static/resources/view/rm520n/settings.js:163
 msgid "Apply NR"
 msgstr "应用 NR"
 
-msgid "Controls"
-msgstr "操作"
+#: htdocs/luci-static/resources/view/rm520n/tools.js:336
+msgid "Are you sure? Internet will drop for ~40-45 seconds."
+msgstr "确定重启？网络将中断约 40-45 秒。"
 
-msgid "APN set to: "
-msgstr "APN 已设置为："
+#: htdocs/luci-static/resources/view/rm520n/overview.js:359
+msgid "AT Port"
+msgstr "AT 端口"
 
-msgid "Set APN"
-msgstr "设置 APN"
+#: htdocs/luci-static/resources/view/rm520n/tools.js:357
+msgid "Automatic Recovery - Connectivity Watchdog"
+msgstr ""
 
-msgid "Refresh Now"
-msgstr "立即刷新"
+#: htdocs/luci-static/resources/view/rm520n/overview.js:398
+msgid "Band"
+msgstr "频段"
 
-msgid "Reconnect Modem"
-msgstr "重新连接调制解调器"
+#: htdocs/luci-static/resources/view/rm520n/settings.js:88
+msgid "Band Configuration"
+msgstr "频段配置"
 
-msgid "Soft reconnect (CFUN=4 → CFUN=1). Connection will drop for ~5 seconds."
-msgstr "软重连（CFUN=4 → CFUN=1），网络将中断约 5 秒。"
+#: htdocs/luci-static/resources/view/rm520n/messages.js:138
+msgid "binary data"
+msgstr ""
 
+#: htdocs/luci-static/resources/view/rm520n/messages.js:202
+#: htdocs/luci-static/resources/view/rm520n/tools.js:319
+#: htdocs/luci-static/resources/view/rm520n/tools.js:339
 msgid "Cancel"
 msgstr "取消"
 
-msgid "Reconnecting modem..."
-msgstr "正在重新连接调制解调器..."
+#: htdocs/luci-static/resources/view/rm520n/overview.js:409
+msgid "Carrier Aggregation"
+msgstr "载波聚合"
 
-msgid "Reconnect"
-msgstr "重新连接"
+#: htdocs/luci-static/resources/view/rm520n/tools.js:415
+msgid "Cascade escalates one step per threshold hit: reconnect, then reboot modem, then reboot the whole router."
+msgstr ""
 
-msgid "Reboot Modem"
-msgstr "重启调制解调器"
+#: htdocs/luci-static/resources/view/rm520n/tools.js:69
+msgid "Cascade: reconnect → reboot modem → reboot router"
+msgstr ""
 
-msgid "Are you sure? Internet will drop for ~20 seconds."
-msgstr "确定重启？网络将中断约 20 秒。"
+#: htdocs/luci-static/resources/view/rm520n/tools.js:115
+msgid "cell %s"
+msgstr ""
 
+#: htdocs/luci-static/resources/view/rm520n/tools.js:150
+msgid "Cell change"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:209
+msgid "Cell changes (24 h)"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:402
+msgid "Cell ID"
+msgstr "小区 ID"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:395
+msgid "Cell Info"
+msgstr "小区信息"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:376
+msgid "Checked only when the ping host fails. If it answers, the connection works and the failure does not count toward the threshold."
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:518
+msgid "Connection Log"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:463
+msgid "Data Counters"
+msgstr "数据统计"
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:212
+#: htdocs/luci-static/resources/view/rm520n/messages.js:241
+msgid "Delete"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:199
+msgid "Delete message"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:200
+msgid "Delete this message from the modem? This cannot be undone."
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:272
+msgid "Disabled"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:399
+msgid "Duplex"
+msgstr "双工模式"
+
+#: htdocs/luci-static/resources/view/rm520n/settings.js:171
+msgid "e.g. internet"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:400
+msgid "EARFCN"
+msgstr "EARFCN"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:424
+msgid "Empty = RAM only (/tmp/rm520n). Point it at external storage to keep the log across reboots."
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:360
+msgid "Enabled"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:167
+msgid "eNB %d · Sector %d"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:321
+msgid "End session"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:419
+msgid "Event log directory"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:401
+msgid "Example: 10 s × 3 = ~30 s minimum; each failed check can add a few seconds more."
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:184
+msgid "Excellent"
+msgstr "信号极佳"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:394
+msgid "Fail threshold"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:184
+msgid "Fair"
+msgstr "信号较弱"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:357
+msgid "Firmware"
+msgstr "固件版本"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:184
+msgid "Good"
+msgstr "信号良好"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:390
+msgid "How often to ping. Detection time = interval × threshold."
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:358
+msgid "IMEI"
+msgstr "IMEI"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:220
+msgid "In RAM, cleared on reboot. Set an event log directory above to keep it."
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:233
+msgid "incomplete %d/%d"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:432
+msgid "Last successful check"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:217
+msgid "Log file"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/settings.js:109
+msgid "LTE Bands"
+msgstr "LTE 频段"
+
+#: htdocs/luci-static/resources/view/rm520n/settings.js:127
+msgid "LTE bands applied."
+msgstr "LTE 频段已应用。"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:366
+msgid "LTE Reg"
+msgstr "LTE 注册"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:311
+msgid "Manual Actions"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:365
+msgid "MCC / MNC"
+msgstr "MCC / MNC"
+
+#: root/usr/share/luci/menu.d/rm520n.json
+msgid "Messages"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:77
+msgid "Mobile data down"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/settings.js:103
+msgid "Mode set to: %s"
+msgstr "网络模式已设置为：%s"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:355
+msgid "Modem"
+msgstr "调制解调器"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:113
+msgid "modem did not answer"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:346
 msgid "Modem is rebooting..."
 msgstr "调制解调器正在重启..."
 
+#: htdocs/luci-static/resources/view/rm520n/tools.js:75
+msgid "Modem/board unreachable"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:71
+msgid "Monitor only (log incidents, no recovery action)"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/settings.js:90
+msgid "Network Mode"
+msgstr "网络模式"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:241
+msgid "never"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:230
+msgid "new"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:485
+msgid "no"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:219
+msgid "No answer from the modem."
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:257
+msgid "No answer from the network. Check the code or try again."
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:76
+msgid "No default route"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:226
+#: htdocs/luci-static/resources/view/rm520n/tools.js:252
+msgid "No events recorded yet."
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:226
+msgid "No messages."
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/settings.js:118
+#: htdocs/luci-static/resources/view/rm520n/settings.js:151
+msgid "None"
+msgstr "全不选"
+
+#: htdocs/luci-static/resources/view/rm520n/settings.js:142
+msgid "NR Bands"
+msgstr "NR 频段"
+
+#: htdocs/luci-static/resources/view/rm520n/settings.js:160
+msgid "NR bands applied."
+msgstr "NR 频段已应用。"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:78
+msgid "Only primary host unreachable"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:205
+msgid "Only primary host unreachable (24 h)"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:364
+msgid "Operator"
+msgstr "运营商"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:201
+msgid "Outage time (24 h)"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:133
+msgid "Outage: %s"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:196
+msgid "Outages (24 h)"
+msgstr ""
+
+#: root/usr/share/luci/menu.d/rm520n.json
+msgid "Overview"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:401
+msgid "PCI"
+msgstr "PCI"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:419
+msgid "Per-Antenna RSRP"
+msgstr "各天线 RSRP"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:364
+msgid "Ping host"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:380
+msgid "Poll interval"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:184
+msgid "Poor"
+msgstr "信号极差"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:348
 msgid "Reboot"
 msgstr "重启"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:335
+#: htdocs/luci-static/resources/view/rm520n/tools.js:352
+msgid "Reboot Modem"
+msgstr "重启调制解调器"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:68
+msgid "Reboot modem (AT+CFUN=1,1, ~40-45 s)"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:70
+msgid "Reboot router (full OpenWrt restart, ~60 s)"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:436
+msgid "Recent events"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:328
+#: htdocs/luci-static/resources/view/rm520n/tools.js:332
+msgid "Reconnect"
+msgstr "重新连接"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:315
+msgid "Reconnect Modem"
+msgstr "重新连接调制解调器"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:67
+msgid "Reconnect only (CFUN=4→1, ~5 s)"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:326
+msgid "Reconnecting modem..."
+msgstr "正在重新连接调制解调器..."
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:143
+msgid "Recovered"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:157
+#: htdocs/luci-static/resources/view/rm520n/tools.js:405
+msgid "Recovery action"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:213
+msgid "Recovery actions (24 h)"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:295
+msgid "Refresh"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:525
+msgid "Refresh Log"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:501
+msgid "Refresh Now"
+msgstr "立即刷新"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:513
+msgid "Refresh Status"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:311
+#: htdocs/luci-static/resources/view/rm520n/messages.js:314
+msgid "Reply"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/settings.js:139
+msgid "Reset All Bands"
+msgstr "重置所有频段"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:481
+msgid "Reset Counters"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:397
+msgid "RRC State"
+msgstr "RRC 状态"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:466
+msgid "RX"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:468
+msgid "RX Speed"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:493
+msgid "Save"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:484
+msgid "Saved - enabled: %s, host: %s, second host: %s, every: %ss, threshold: %s, action: %s"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:371
+msgid "Second ping host"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:307
+msgid "Send"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:302
+msgid "Send a code such as a balance check to your operator. The answer can take up to 15 seconds."
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:150
+msgid "Serving cell"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:259
+msgid "Session closed by the network."
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/settings.js:180
+msgid "Set APN"
+msgstr "设置 APN"
+
+#: root/usr/share/luci/menu.d/rm520n.json
+msgid "Settings"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:374
+msgid "Signal"
+msgstr "信号"
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:291
+msgid "SMS Inbox"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:316
+msgid "Soft reconnect (CFUN=4 → CFUN=1). Connection will drop for ~5 seconds."
+msgstr "软重连（CFUN=4 → CFUN=1），网络将中断约 5 秒。"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:428
+msgid "Status"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:223
+msgid "Storage %s: %s / %s used"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:361
+msgid "Supply Voltage"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:403
+msgid "TAC"
+msgstr "TAC"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:447
+msgid "Temperature"
+msgstr "温度"
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:261
+msgid "The network did not accept the request."
+msgstr ""
+
+#: root/usr/share/luci/menu.d/rm520n.json
+msgid "Tools"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:465
+msgid "TX"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:467
+msgid "TX Speed"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:150
+msgid "Unsupported message type"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:360
+msgid "Uptime"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:300
+msgid "USSD"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:184
+msgid "Very Good"
+msgstr "信号很好"
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:277
+msgid "Waiting for the network..."
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:520
+msgid "Written by the watchdog: outages classified by what was still reachable, recovery actions, and serving cell changes (checked every 60 s)."
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:485
+msgid "yes"
+msgstr ""

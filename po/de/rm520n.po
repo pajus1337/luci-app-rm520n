@@ -1,0 +1,621 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: de\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:283
+msgid "%d / %d consecutive failures"
+msgstr "%d / %d Fehlschläge in Folge"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:398
+msgid "%d consecutive failure"
+msgid_plural "%d consecutive failures"
+msgstr[0] "%d Fehlschlag in Folge"
+msgstr[1] "%d Fehlschläge in Folge"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:246
+msgid "%dd ago"
+msgstr "vor %d Tg."
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:245
+msgid "%dh ago"
+msgstr "vor %d Std."
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:244
+msgid "%dm ago"
+msgstr "vor %d Min."
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:243
+msgid "%ds ago"
+msgstr "vor %d s"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:114
+msgid "%s band %s"
+msgstr "%s Band %s"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:145
+msgid "%s, after %s"
+msgstr "%s, nach %s"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:165
+msgid "%s: no modem AT port"
+msgstr "%s: kein AT-Port des Modems"
+
+#: root/usr/share/luci/menu.d/rm520n.json
+msgid "5G Modem (RM520N)"
+msgstr "5G-Modem (RM520N)"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:367
+msgid "5G NR Reg"
+msgstr "5G-NR-Registrierung"
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:274
+msgid "A USSD code may only contain digits, * and #."
+msgstr "Ein USSD-Code darf nur Ziffern, * und # enthalten."
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:163
+msgid "Action skipped"
+msgstr "Aktion übersprungen"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:279
+msgid "Active - polling every %ds, no failures"
+msgstr "Aktiv - Prüfung alle %d s, keine Fehler"
+
+#: htdocs/luci-static/resources/view/rm520n/settings.js:114
+#: htdocs/luci-static/resources/view/rm520n/settings.js:147
+msgid "All"
+msgstr "Alle"
+
+#: htdocs/luci-static/resources/view/rm520n/settings.js:136
+msgid "All bands restored."
+msgstr "Alle Bänder wiederhergestellt."
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:66
+msgid "Ambient"
+msgstr "Umgebung"
+
+#: htdocs/luci-static/resources/view/rm520n/settings.js:168
+msgid "APN"
+msgstr "APN"
+
+#: htdocs/luci-static/resources/view/rm520n/settings.js:177
+msgid "APN set to: %s"
+msgstr "APN gesetzt: %s"
+
+#: htdocs/luci-static/resources/view/rm520n/settings.js:130
+msgid "Apply LTE"
+msgstr "LTE übernehmen"
+
+#: htdocs/luci-static/resources/view/rm520n/settings.js:106
+msgid "Apply Mode"
+msgstr "Modus übernehmen"
+
+#: htdocs/luci-static/resources/view/rm520n/settings.js:163
+msgid "Apply NR"
+msgstr "NR übernehmen"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:336
+msgid "Are you sure? Internet will drop for ~40-45 seconds."
+msgstr "Sind Sie sicher? Die Internetverbindung fällt für ca. 40-45 Sekunden aus."
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:359
+msgid "AT Port"
+msgstr "AT-Port"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:357
+msgid "Automatic Recovery - Connectivity Watchdog"
+msgstr "Automatische Wiederherstellung - Verbindungs-Watchdog"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:398
+msgid "Band"
+msgstr "Band"
+
+#: htdocs/luci-static/resources/view/rm520n/settings.js:88
+msgid "Band Configuration"
+msgstr "Bandkonfiguration"
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:138
+msgid "binary data"
+msgstr "Binärdaten"
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:202
+#: htdocs/luci-static/resources/view/rm520n/tools.js:319
+#: htdocs/luci-static/resources/view/rm520n/tools.js:339
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:409
+msgid "Carrier Aggregation"
+msgstr "Carrier Aggregation"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:415
+msgid "Cascade escalates one step per threshold hit: reconnect, then reboot modem, then reboot the whole router."
+msgstr "Die Kaskade geht bei jedem Erreichen der Schwelle eine Stufe weiter: Neuverbindung, dann Modem-Neustart, dann Neustart des gesamten Routers."
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:69
+msgid "Cascade: reconnect → reboot modem → reboot router"
+msgstr "Kaskade: Neuverbindung → Modem-Neustart → Router-Neustart"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:115
+msgid "cell %s"
+msgstr "Zelle %s"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:150
+msgid "Cell change"
+msgstr "Zellwechsel"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:209
+msgid "Cell changes (24 h)"
+msgstr "Zellwechsel (24 h)"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:402
+msgid "Cell ID"
+msgstr "Zellen-ID"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:395
+msgid "Cell Info"
+msgstr "Zelleninfo"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:376
+msgid "Checked only when the ping host fails. If it answers, the connection works and the failure does not count toward the threshold."
+msgstr "Wird nur geprüft, wenn der Ping-Host nicht antwortet. Antwortet dieser, funktioniert die Verbindung und der Fehler zählt nicht zur Schwelle."
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:518
+msgid "Connection Log"
+msgstr "Verbindungsprotokoll"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:463
+msgid "Data Counters"
+msgstr "Datenzähler"
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:212
+#: htdocs/luci-static/resources/view/rm520n/messages.js:241
+msgid "Delete"
+msgstr "Löschen"
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:199
+msgid "Delete message"
+msgstr "Nachricht löschen"
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:200
+msgid "Delete this message from the modem? This cannot be undone."
+msgstr "Diese Nachricht vom Modem löschen? Das kann nicht rückgängig gemacht werden."
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:272
+msgid "Disabled"
+msgstr "Deaktiviert"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:399
+msgid "Duplex"
+msgstr "Duplex"
+
+#: htdocs/luci-static/resources/view/rm520n/settings.js:171
+msgid "e.g. internet"
+msgstr "z. B. internet"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:400
+msgid "EARFCN"
+msgstr "EARFCN"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:424
+msgid "Empty = RAM only (/tmp/rm520n). Point it at external storage to keep the log across reboots."
+msgstr "Leer = nur RAM (/tmp/rm520n). Auf externen Speicher setzen, damit das Protokoll Neustarts übersteht."
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:360
+msgid "Enabled"
+msgstr "Aktiviert"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:167
+msgid "eNB %d · Sector %d"
+msgstr "eNB %d · Sektor %d"
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:321
+msgid "End session"
+msgstr "Sitzung beenden"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:419
+msgid "Event log directory"
+msgstr "Verzeichnis für das Ereignisprotokoll"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:401
+msgid "Example: 10 s × 3 = ~30 s minimum; each failed check can add a few seconds more."
+msgstr "Beispiel: 10 s × 3 = mindestens ca. 30 s; jede fehlgeschlagene Prüfung kann einige Sekunden hinzufügen."
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:184
+msgid "Excellent"
+msgstr "Ausgezeichnet"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:394
+msgid "Fail threshold"
+msgstr "Fehlerschwelle"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:184
+msgid "Fair"
+msgstr "Mäßig"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:357
+msgid "Firmware"
+msgstr "Firmware"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:184
+msgid "Good"
+msgstr "Gut"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:390
+msgid "How often to ping. Detection time = interval × threshold."
+msgstr "Wie oft gepingt wird. Erkennungszeit = Intervall × Schwelle."
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:358
+msgid "IMEI"
+msgstr "IMEI"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:220
+msgid "In RAM, cleared on reboot. Set an event log directory above to keep it."
+msgstr "Im RAM, wird beim Neustart gelöscht. Oben ein Verzeichnis für das Ereignisprotokoll setzen, um es zu behalten."
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:233
+msgid "incomplete %d/%d"
+msgstr "unvollständig %d/%d"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:432
+msgid "Last successful check"
+msgstr "Letzte erfolgreiche Prüfung"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:217
+msgid "Log file"
+msgstr "Protokolldatei"
+
+#: htdocs/luci-static/resources/view/rm520n/settings.js:109
+msgid "LTE Bands"
+msgstr "LTE-Bänder"
+
+#: htdocs/luci-static/resources/view/rm520n/settings.js:127
+msgid "LTE bands applied."
+msgstr "LTE-Bänder übernommen."
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:366
+msgid "LTE Reg"
+msgstr "LTE-Registrierung"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:311
+msgid "Manual Actions"
+msgstr "Manuelle Aktionen"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:365
+msgid "MCC / MNC"
+msgstr "MCC / MNC"
+
+#: root/usr/share/luci/menu.d/rm520n.json
+msgid "Messages"
+msgstr "Nachrichten"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:77
+msgid "Mobile data down"
+msgstr "Mobile Daten ausgefallen"
+
+#: htdocs/luci-static/resources/view/rm520n/settings.js:103
+msgid "Mode set to: %s"
+msgstr "Modus gesetzt: %s"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:355
+msgid "Modem"
+msgstr "Modem"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:113
+msgid "modem did not answer"
+msgstr "Modem hat nicht geantwortet"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:346
+msgid "Modem is rebooting..."
+msgstr "Modem wird neu gestartet..."
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:75
+msgid "Modem/board unreachable"
+msgstr "Modem/Platine nicht erreichbar"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:71
+msgid "Monitor only (log incidents, no recovery action)"
+msgstr "Nur überwachen (Vorfälle protokollieren, keine Wiederherstellung)"
+
+#: htdocs/luci-static/resources/view/rm520n/settings.js:90
+msgid "Network Mode"
+msgstr "Netzmodus"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:241
+msgid "never"
+msgstr "nie"
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:230
+msgid "new"
+msgstr "neu"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:485
+msgid "no"
+msgstr "nein"
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:219
+msgid "No answer from the modem."
+msgstr "Keine Antwort vom Modem."
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:257
+msgid "No answer from the network. Check the code or try again."
+msgstr "Keine Antwort vom Netz. Code prüfen oder erneut versuchen."
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:76
+msgid "No default route"
+msgstr "Keine Standardroute"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:226
+#: htdocs/luci-static/resources/view/rm520n/tools.js:252
+msgid "No events recorded yet."
+msgstr "Noch keine Ereignisse aufgezeichnet."
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:226
+msgid "No messages."
+msgstr "Keine Nachrichten."
+
+#: htdocs/luci-static/resources/view/rm520n/settings.js:118
+#: htdocs/luci-static/resources/view/rm520n/settings.js:151
+msgid "None"
+msgstr "Keine"
+
+#: htdocs/luci-static/resources/view/rm520n/settings.js:142
+msgid "NR Bands"
+msgstr "NR-Bänder"
+
+#: htdocs/luci-static/resources/view/rm520n/settings.js:160
+msgid "NR bands applied."
+msgstr "NR-Bänder übernommen."
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:78
+msgid "Only primary host unreachable"
+msgstr "Nur der primäre Host nicht erreichbar"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:205
+msgid "Only primary host unreachable (24 h)"
+msgstr "Nur der primäre Host nicht erreichbar (24 h)"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:364
+msgid "Operator"
+msgstr "Betreiber"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:201
+msgid "Outage time (24 h)"
+msgstr "Ausfallzeit (24 h)"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:133
+msgid "Outage: %s"
+msgstr "Ausfall: %s"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:196
+msgid "Outages (24 h)"
+msgstr "Ausfälle (24 h)"
+
+#: root/usr/share/luci/menu.d/rm520n.json
+msgid "Overview"
+msgstr "Übersicht"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:401
+msgid "PCI"
+msgstr "PCI"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:419
+msgid "Per-Antenna RSRP"
+msgstr "RSRP pro Antenne"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:364
+msgid "Ping host"
+msgstr "Ping-Host"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:380
+msgid "Poll interval"
+msgstr "Prüfintervall"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:184
+msgid "Poor"
+msgstr "Schlecht"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:348
+msgid "Reboot"
+msgstr "Neu starten"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:335
+#: htdocs/luci-static/resources/view/rm520n/tools.js:352
+msgid "Reboot Modem"
+msgstr "Modem neu starten"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:68
+msgid "Reboot modem (AT+CFUN=1,1, ~40-45 s)"
+msgstr "Modem neu starten (AT+CFUN=1,1, ca. 40-45 s)"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:70
+msgid "Reboot router (full OpenWrt restart, ~60 s)"
+msgstr "Router neu starten (kompletter OpenWrt-Neustart, ca. 60 s)"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:436
+msgid "Recent events"
+msgstr "Letzte Ereignisse"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:328
+#: htdocs/luci-static/resources/view/rm520n/tools.js:332
+msgid "Reconnect"
+msgstr "Neu verbinden"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:315
+msgid "Reconnect Modem"
+msgstr "Modem neu verbinden"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:67
+msgid "Reconnect only (CFUN=4→1, ~5 s)"
+msgstr "Nur neu verbinden (CFUN=4→1, ca. 5 s)"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:326
+msgid "Reconnecting modem..."
+msgstr "Modem wird neu verbunden..."
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:143
+msgid "Recovered"
+msgstr "Wiederhergestellt"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:157
+#: htdocs/luci-static/resources/view/rm520n/tools.js:405
+msgid "Recovery action"
+msgstr "Wiederherstellungsaktion"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:213
+msgid "Recovery actions (24 h)"
+msgstr "Wiederherstellungsaktionen (24 h)"
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:295
+msgid "Refresh"
+msgstr "Aktualisieren"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:525
+msgid "Refresh Log"
+msgstr "Protokoll aktualisieren"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:501
+msgid "Refresh Now"
+msgstr "Jetzt aktualisieren"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:513
+msgid "Refresh Status"
+msgstr "Status aktualisieren"
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:311
+#: htdocs/luci-static/resources/view/rm520n/messages.js:314
+msgid "Reply"
+msgstr "Antworten"
+
+#: htdocs/luci-static/resources/view/rm520n/settings.js:139
+msgid "Reset All Bands"
+msgstr "Alle Bänder zurücksetzen"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:481
+msgid "Reset Counters"
+msgstr "Zähler zurücksetzen"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:397
+msgid "RRC State"
+msgstr "RRC-Status"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:466
+msgid "RX"
+msgstr "RX"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:468
+msgid "RX Speed"
+msgstr "RX-Rate"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:493
+msgid "Save"
+msgstr "Speichern"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:484
+msgid "Saved - enabled: %s, host: %s, second host: %s, every: %ss, threshold: %s, action: %s"
+msgstr "Gespeichert - aktiviert: %s, Host: %s, zweiter Host: %s, alle: %s s, Schwelle: %s, Aktion: %s"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:371
+msgid "Second ping host"
+msgstr "Zweiter Ping-Host"
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:307
+msgid "Send"
+msgstr "Senden"
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:302
+msgid "Send a code such as a balance check to your operator. The answer can take up to 15 seconds."
+msgstr "Senden Sie einen Code an Ihren Betreiber, z. B. eine Guthabenabfrage. Die Antwort kann bis zu 15 Sekunden dauern."
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:150
+msgid "Serving cell"
+msgstr "Versorgende Zelle"
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:259
+msgid "Session closed by the network."
+msgstr "Sitzung vom Netz beendet."
+
+#: htdocs/luci-static/resources/view/rm520n/settings.js:180
+msgid "Set APN"
+msgstr "APN setzen"
+
+#: root/usr/share/luci/menu.d/rm520n.json
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:374
+msgid "Signal"
+msgstr "Signal"
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:291
+msgid "SMS Inbox"
+msgstr "SMS-Posteingang"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:316
+msgid "Soft reconnect (CFUN=4 → CFUN=1). Connection will drop for ~5 seconds."
+msgstr "Sanfte Neuverbindung (CFUN=4 → CFUN=1). Die Verbindung fällt für ca. 5 Sekunden aus."
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:428
+msgid "Status"
+msgstr "Status"
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:223
+msgid "Storage %s: %s / %s used"
+msgstr "Speicher %s: %s / %s belegt"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:361
+msgid "Supply Voltage"
+msgstr "Versorgungsspannung"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:403
+msgid "TAC"
+msgstr "TAC"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:447
+msgid "Temperature"
+msgstr "Temperatur"
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:261
+msgid "The network did not accept the request."
+msgstr "Das Netz hat die Anfrage nicht angenommen."
+
+#: root/usr/share/luci/menu.d/rm520n.json
+msgid "Tools"
+msgstr "Werkzeuge"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:465
+msgid "TX"
+msgstr "TX"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:467
+msgid "TX Speed"
+msgstr "TX-Rate"
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:150
+msgid "Unsupported message type"
+msgstr "Nicht unterstützter Nachrichtentyp"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:360
+msgid "Uptime"
+msgstr "Laufzeit"
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:300
+msgid "USSD"
+msgstr "USSD"
+
+#: htdocs/luci-static/resources/view/rm520n/overview.js:184
+msgid "Very Good"
+msgstr "Sehr gut"
+
+#: htdocs/luci-static/resources/view/rm520n/messages.js:277
+msgid "Waiting for the network..."
+msgstr "Warte auf das Netz..."
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:520
+msgid "Written by the watchdog: outages classified by what was still reachable, recovery actions, and serving cell changes (checked every 60 s)."
+msgstr "Vom Watchdog geschrieben: Ausfälle, eingeteilt danach, was noch erreichbar war, Wiederherstellungsaktionen und Wechsel der versorgenden Zelle (alle 60 s geprüft)."
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:485
+msgid "yes"
+msgstr "ja"
