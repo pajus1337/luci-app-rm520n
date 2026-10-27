@@ -147,6 +147,12 @@ voltage, traffic since the last snapshot, per-SCC signal, and local gateway reac
 captured at that moment, so repeated events can be correlated with signal quality — and with
 whether the modem itself was still reachable — rather than just timestamps.
 
+If the modem's AT port or the `rm520n` rpcd object is missing when the threshold is reached
+(for example right after a firmware upgrade, before the USB serial driver is reinstalled), the
+watchdog logs this once and skips the action instead of escalating. That includes
+`reboot_router`, since a router reboot cannot restore a missing driver. Monitoring continues, and
+actions resume as soon as the port is back.
+
 Configure it under **Network → 5G Modem (RM520N) → Settings**, where you can also see time since
 the last successful check and a scrollable history of recent watchdog events.
 

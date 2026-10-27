@@ -9,6 +9,7 @@ FAIL_FILE="/tmp/rm520n_watchdog_fails"
 STAGE_FILE="/tmp/rm520n_watchdog_stage"
 LAST_OK_FILE="/tmp/rm520n_watchdog_last_ok"
 COUNTERS_FILE="/tmp/rm520n_watchdog_counters"
+NO_MODEM_FILE="/tmp/rm520n_watchdog_no_modem"
 
 _cfg() { uci -q get "rm520n.watchdog.$1" 2>/dev/null; }
 
@@ -94,6 +95,18 @@ _wait_for_recovery() {
     logger -t rm520n-watchdog "connectivity not confirmed within ${max_wait}s cap (waited ${elapsed}s)"
 }
 
+# Every action, reboot_router included, is only useful while the modem can be
+# managed. Without an AT port (e.g. serial kmods missing after a stock firmware
+# upgrade) a router reboot cannot bring it back and would loop forever.
+_modem_ready() {
+    local p
+    ubus list rm520n >/dev/null 2>&1 || return 1
+    for p in /dev/ttyUSB2 /dev/ttyUSB3 /dev/ttyUSB1 /dev/ttyUSB0; do
+        [ -c "$p" ] && return 0
+    done
+    return 1
+}
+
 _trigger_reconnect() {
     logger -t rm520n-watchdog "threshold reached — action: reconnect [$(_signal_snapshot)]"
     printf '1' > "$STAGE_FILE"
@@ -150,6 +163,20 @@ while true; do
     if [ "$fails" -lt "$threshold" ]; then
         sleep "$interval"
         continue
+    fi
+
+    if ! _modem_ready; then
+        if [ ! -f "$NO_MODEM_FILE" ]; then
+            logger -t rm520n-watchdog "threshold reached but no modem AT port or rm520n rpcd object - skipping $action, monitoring continues"
+            touch "$NO_MODEM_FILE"
+        fi
+        rm -f "$FAIL_FILE"
+        sleep "$interval"
+        continue
+    fi
+    if [ -f "$NO_MODEM_FILE" ]; then
+        logger -t rm520n-watchdog "modem AT port available again - actions re-enabled"
+        rm -f "$NO_MODEM_FILE"
     fi
 
     case "$action" in
