@@ -1,5 +1,5 @@
 #!/bin/sh
-# Connectivity watchdog for rm520n — runs as a procd-managed daemon.
+# Connectivity watchdog for rm520n - runs as a procd-managed daemon.
 # Polls the configured host every <interval> seconds. On <threshold> consecutive
 # failures triggers the configured action. Cascade mode escalates in three
 # stages: reconnect -> reboot_modem -> reboot_router, one stage per threshold
@@ -14,7 +14,7 @@ NO_MODEM_FILE="/tmp/rm520n_watchdog_no_modem"
 _cfg() { uci -q get "rm520n.watchdog.$1" 2>/dev/null; }
 
 # One-line signal snapshot taken via the existing rpcd refresh() call, so
-# every logged action carries the connection state that led to it — makes
+# every logged action carries the connection state that led to it - makes
 # the history log useful for diagnosing whether failures correlate with
 # poor signal, PSU quality, traffic load, or NR SCC state.
 _signal_snapshot() {
@@ -63,7 +63,7 @@ _signal_snapshot() {
         "${tech:-?}" "${rsrp:-?}" "${sinr:-?}" "${rrc:-?}" "${mv:-?}" "$dtx" "$drx" "$scc" "$(_gw_ping)"
 }
 
-# Reachability of the local next hop, independent of the target host — lets a
+# Reachability of the local next hop, independent of the target host - lets a
 # logged snapshot distinguish "modem/board unreachable" from "operator/WAN
 # down but the local link is fine". Uses the live default route so this stays
 # correct regardless of how the modem's data path is set up on a given router.
@@ -78,7 +78,7 @@ _gw_ping() {
 # case: checks the WAN interface is up and a ping succeeds, every 3s up to
 # max_wait seconds. Resumes as soon as recovery is confirmed and logs the
 # measured recovery time either way, so the fixed cap only ever bounds
-# duration — it no longer dictates it.
+# duration - it no longer dictates it.
 _wait_for_recovery() {
     local max_wait="$1" host="$2" start elapsed wan_up
     start="$(date +%s)"
@@ -108,7 +108,7 @@ _modem_ready() {
 }
 
 _trigger_reconnect() {
-    logger -t rm520n-watchdog "threshold reached — action: reconnect [$(_signal_snapshot)]"
+    logger -t rm520n-watchdog "threshold reached - action: reconnect [$(_signal_snapshot)]"
     printf '1' > "$STAGE_FILE"
     rm -f "$FAIL_FILE"
     ubus call rm520n reconnect
@@ -116,23 +116,23 @@ _trigger_reconnect() {
 }
 
 _trigger_reboot_modem() {
-    logger -t rm520n-watchdog "threshold reached — action: reboot_modem [$(_signal_snapshot)]"
+    logger -t rm520n-watchdog "threshold reached - action: reboot_modem [$(_signal_snapshot)]"
     printf '2' > "$STAGE_FILE"
     rm -f "$FAIL_FILE"
     ubus call rm520n reboot_modem
     # AT+CFUN=1,1 resets the modem's own byte counters (AT+QGDCNT), so the
-    # next _signal_snapshot() must not diff against pre-reboot values —
+    # next _signal_snapshot() must not diff against pre-reboot values -
     # that produced nonsensical negative tx+/rx+ deltas across the reset.
     rm -f "$COUNTERS_FILE"
     _wait_for_recovery 60 "$host"
 }
 
 _trigger_reboot_router() {
-    logger -t rm520n-watchdog "threshold reached — action: reboot_router (full system reboot) [$(_signal_snapshot)]"
+    logger -t rm520n-watchdog "threshold reached - action: reboot_router (full system reboot) [$(_signal_snapshot)]"
     rm -f "$FAIL_FILE" "$STAGE_FILE"
     sync
     reboot
-    # The process is about to be killed by the reboot itself — there is no
+    # The process is about to be killed by the reboot itself - there is no
     # connectivity left to poll for from here, just a grace period so this
     # loop iteration doesn't race back into another trigger beforehand.
     sleep 120
@@ -183,9 +183,9 @@ while true; do
         cascade)
             stage="$(cat "$STAGE_FILE" 2>/dev/null)"; stage="${stage:-0}"
             case "$stage" in
-                1) logger -t rm520n-watchdog "reconnect was ineffective — escalating"
+                1) logger -t rm520n-watchdog "reconnect was ineffective - escalating"
                    _trigger_reboot_modem ;;
-                2) logger -t rm520n-watchdog "reboot_modem was ineffective — escalating"
+                2) logger -t rm520n-watchdog "reboot_modem was ineffective - escalating"
                    _trigger_reboot_router ;;
                 *) _trigger_reconnect ;;
             esac

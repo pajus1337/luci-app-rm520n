@@ -1,7 +1,7 @@
 # luci-app-rm520n
 
 > LuCI web panel for **Quectel RM520NGL 5G modem** management on OpenWrt 25.12.
-> Provides real-time signal monitoring, band locking, APN configuration, and modem diagnostics — directly in your router's web interface.
+> Provides real-time signal monitoring, band locking, APN configuration, and modem diagnostics - directly in your router's web interface.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![OpenWrt](https://img.shields.io/badge/OpenWrt-25.12-blue.svg)](https://openwrt.org)
@@ -10,30 +10,30 @@
 
 ## Overview
 
-When the RM520NGL modem operates in **PCIe/GbE mode** (via the Waveshare carrier board), OpenWrt treats the connection as a plain Ethernet WAN — the modem is invisible to LuCI. This app fills that gap by communicating with the modem directly over its **USB AT command port** (`/dev/ttyUSB2`) and exposing a rich management panel in the LuCI web interface.
+When the RM520NGL modem operates in **PCIe/GbE mode** (via the Waveshare carrier board), OpenWrt treats the connection as a plain Ethernet WAN - the modem is invisible to LuCI. This app fills that gap by communicating with the modem directly over its **USB AT command port** (`/dev/ttyUSB2`) and exposing a rich management panel in the LuCI web interface.
 
-**Companion project:** [gl-mt6000-rm520n-auto-config](https://github.com/pajus1337/gl-mt6000-rm520n-auto-config) — the installer that sets up the GbE data path this app is designed to complement.
+**Companion project:** [gl-mt6000-rm520n-auto-config](https://github.com/pajus1337/gl-mt6000-rm520n-auto-config) - the installer that sets up the GbE data path this app is designed to complement.
 
 ---
 
 ## Features
 
-- **Signal dashboard** — RSRP bar chart with colour coding, RSSI, SINR, RSRQ; auto-refreshed every 10 s
-- **Signal quality badge** — combined RSRP + SINR score: Poor / Fair / Good / Very Good / Excellent
-- **Technology badge** — live indicator: `LTE`, `NR5G-NSA`, `NR5G-SA`
-- **Modem info** — firmware version, IMEI, LTE and 5G NR registration status, operator, MCC/MNC
-- **Cell Info** — RRC state, band, duplex, EARFCN, PCI, TAC; fallbacks from QNWINFO/QCAINFO/CEREG for NOCONN mode
-- **Cell ID block** — hex + decimal ECI, decoded eNB ID and sector, direct **CellMapper** deep-link
-- **Carrier Aggregation** — lists PCC/SCC with band, EARFCN, PCI, RSRP per component carrier
-- **Per-antenna RSRP** — RX0–RX3 individual signal levels with colour coding
-- **Temperature panel** — all active modem sensors with colour-coded values (green / amber / orange / red)
-- **Data counters** — modem-side TX/RX byte totals via `AT+QGDCNT?`
-- **Band configuration** — toggle chip buttons per LTE/NR band, All/None shortcuts, Apply per RAT, Reset All Bands
-- **Network mode** — switch between AUTO / LTE / NR5G / LTE:NR5G
-- **APN configuration** — change APN without touching UCI
-- **Reconnect** — soft reconnect (CFUN=4 → CFUN=1, ~5 s downtime) with confirmation dialog
-- **Modem reboot** — full restart (CFUN=1,1, ~20 s) with confirmation dialog
-- **Connectivity watchdog** — procd daemon pings a configurable host; on repeated failure runs reconnect, modem reboot, a 3-stage cascade (reconnect → reboot modem → reboot router), or a router reboot outright. Settings shows live status, time since last successful check, and a scrollable event history (with a signal snapshot logged at each action) so failures can be correlated with signal quality
+- **Signal dashboard** - RSRP bar chart with colour coding, RSSI, SINR, RSRQ; auto-refreshed every 10 s
+- **Signal quality badge** - combined RSRP + SINR score: Poor / Fair / Good / Very Good / Excellent
+- **Technology badge** - live indicator: `LTE`, `NR5G-NSA`, `NR5G-SA`
+- **Modem info** - firmware version, IMEI, LTE and 5G NR registration status, operator, MCC/MNC
+- **Cell Info** - RRC state, band, duplex, EARFCN, PCI, TAC; fallbacks from QNWINFO/QCAINFO/CEREG for NOCONN mode
+- **Cell ID block** - hex + decimal ECI, decoded eNB ID and sector, direct **CellMapper** deep-link
+- **Carrier Aggregation** - lists PCC/SCC with band, EARFCN, PCI, RSRP per component carrier
+- **Per-antenna RSRP** - RX0-RX3 individual signal levels with colour coding
+- **Temperature panel** - all active modem sensors with colour-coded values (green / amber / orange / red)
+- **Data counters** - modem-side TX/RX byte totals via `AT+QGDCNT?`
+- **Band configuration** - toggle chip buttons per LTE/NR band, All/None shortcuts, Apply per RAT, Reset All Bands
+- **Network mode** - switch between AUTO / LTE / NR5G / LTE:NR5G
+- **APN configuration** - change APN without touching UCI
+- **Reconnect** - soft reconnect (CFUN=4 → CFUN=1, ~5 s downtime) with confirmation dialog
+- **Modem reboot** - full restart (CFUN=1,1, ~20 s) with confirmation dialog
+- **Connectivity watchdog** - procd daemon pings a configurable host; on repeated failure runs reconnect, modem reboot, a 3-stage cascade (reconnect → reboot modem → reboot router), or a router reboot outright. Settings shows live status, time since last successful check, and a scrollable event history (with a signal snapshot logged at each action) so failures can be correlated with signal quality
 
 ---
 
@@ -50,12 +50,12 @@ When the RM520NGL modem operates in **PCIe/GbE mode** (via the Waveshare carrier
 
 ## Installation
 
-**Option A — One-liner (wget, available on all OpenWrt installs):**
+**Option A - One-liner (wget, available on all OpenWrt installs):**
 ```sh
 wget -qO- https://raw.githubusercontent.com/pajus1337/luci-app-rm520n/main/install.sh | sh
 ```
 
-**Option B — Clone and run locally:**
+**Option B - Clone and run locally:**
 ```sh
 cd /root
 git clone https://github.com/pajus1337/luci-app-rm520n.git
@@ -63,7 +63,7 @@ cd luci-app-rm520n
 sh install.sh
 ```
 
-The installer copies files directly to the router filesystem — no OpenWrt build system required.
+The installer copies files directly to the router filesystem - no OpenWrt build system required.
 
 After installation, open LuCI and navigate to:
 **Network → 5G Modem (RM520N)**
@@ -99,9 +99,9 @@ LuCI browser (JavaScript view)
 
 | File | Description |
 |---|---|
-| `root/usr/libexec/rpcd/rm520n` | Shell script backend — handles JSON-RPC calls, queries modem via AT |
-| `htdocs/.../view/rm520n/overview.js` | LuCI JavaScript view — cards, signal bars, controls, auto-refresh |
-| `htdocs/.../view/rm520n/settings.js` | LuCI JavaScript view — watchdog configuration, status, event history |
+| `root/usr/libexec/rpcd/rm520n` | Shell script backend - handles JSON-RPC calls, queries modem via AT |
+| `htdocs/.../view/rm520n/overview.js` | LuCI JavaScript view - cards, signal bars, controls, auto-refresh |
+| `htdocs/.../view/rm520n/settings.js` | LuCI JavaScript view - watchdog configuration, status, event history |
 | `root/usr/sbin/rm520n-watchdog` | Connectivity watchdog daemon (procd-managed) |
 | `root/etc/init.d/rm520n-watchdog` | procd init script for the watchdog daemon |
 | `root/usr/share/luci/menu.d/rm520n.json` | Registers the page under Network menu |
@@ -113,7 +113,7 @@ LuCI browser (JavaScript view)
 
 | Method | Type | Description |
 |---|---|---|
-| `full_status` | read | All modem data in one call — used on page load |
+| `full_status` | read | All modem data in one call - used on page load |
 | `refresh` | read | Fast refresh: signal, cell info, CA, per-antenna RSRP (10 s poll) |
 | `bands` | read | Current LTE/NR band masks and mode preference |
 | `set_bands` | write | Lock to specific LTE and/or NR bands (`AT+QNWPREFCFG`) |
@@ -140,12 +140,12 @@ interval and counts consecutive failures. Once the failure threshold is reached 
 | `cascade` | Escalates one stage per threshold hit: reconnect → reboot modem → reboot router |
 | `reboot_router` | Full OpenWrt reboot |
 
-Detection time is `interval × threshold` at minimum (e.g. 10 s × 3 = ~30 s) — a little more under
+Detection time is `interval × threshold` at minimum (e.g. 10 s × 3 = ~30 s) - a little more under
 packet loss, since each failed check itself waits on ping timeouts. Every triggered action is
 logged via syslog with a one-line signal snapshot (technology, RSRP, SINR, RRC state, supply
 voltage, traffic since the last snapshot, per-SCC signal, and local gateway reachability)
-captured at that moment, so repeated events can be correlated with signal quality — and with
-whether the modem itself was still reachable — rather than just timestamps.
+captured at that moment, so repeated events can be correlated with signal quality - and with
+whether the modem itself was still reachable - rather than just timestamps.
 
 If the modem's AT port or the `rm520n` rpcd object is missing when the threshold is reached
 (for example right after a firmware upgrade, before the USB serial driver is reinstalled), the
@@ -161,10 +161,10 @@ the last successful check and a scrollable history of recent watchdog events.
 | Metric | Excellent | Very Good | Good | Fair | Poor |
 |---|---|---|---|---|---|
 | RSRP | > −80 dBm | > −90 dBm | > −100 dBm | > −110 dBm | ≤ −110 dBm |
-| SINR (modifier) | — | — | +1 score if ≥ 10 dB | — | −1 score if < 0 dB |
-| RSRQ (display) | > −10 dB | > −15 dB | > −20 dB | ≤ −20 dB | — |
+| SINR (modifier) | - | - | +1 score if ≥ 10 dB | - | −1 score if < 0 dB |
+| RSRQ (display) | > −10 dB | > −15 dB | > −20 dB | ≤ −20 dB | - |
 
-The badge score (1–5) is RSRP-based, then adjusted ±1 by SINR.
+The badge score (1-5) is RSRP-based, then adjusted ±1 by SINR.
 
 ---
 
@@ -193,11 +193,11 @@ exec 3>&-
 rm -rf /tmp/luci-indexcache /tmp/luci-modulecache
 ```
 
-**Band/EARFCN show `—` in Cell Info:**
+**Band/EARFCN show `-` in Cell Info:**
 The modem enters `NOCONN` state on the AT port when data runs over PCIe/GbE. `AT+QENG="servingcell"` returns no cell data in this state. The app falls back to `AT+QNWINFO` (band/EARFCN) and `AT+QCAINFO` (PCI) automatically.
 
 **`wwan_mgmt` shows "Absent" / disconnected in LuCI → Network → Interfaces:**
-Expected — this app doesn't use that interface at all. It talks to the modem over the AT/USB port directly, not QMI. If you installed the companion [gl-mt6000-rm520n-auto-config](https://github.com/pajus1337/gl-mt6000-rm520n-auto-config) installer, see its README Troubleshooting section for why that interface exists and why it's never connected.
+Expected - this app doesn't use that interface at all. It talks to the modem over the AT/USB port directly, not QMI. If you installed the companion [gl-mt6000-rm520n-auto-config](https://github.com/pajus1337/gl-mt6000-rm520n-auto-config) installer, see its README Troubleshooting section for why that interface exists and why it's never connected.
 
 ---
 
@@ -219,7 +219,7 @@ Expected — this app doesn't use that interface at all. It talks to the modem o
 
 ## Related Projects
 
-- [gl-mt6000-rm520n-auto-config](https://github.com/pajus1337/gl-mt6000-rm520n-auto-config) — Automated installer for the full GbE modem setup on GL-MT6000
+- [gl-mt6000-rm520n-auto-config](https://github.com/pajus1337/gl-mt6000-rm520n-auto-config) - Automated installer for the full GbE modem setup on GL-MT6000
 
 ---
 

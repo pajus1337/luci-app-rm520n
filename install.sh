@@ -1,5 +1,5 @@
 #!/bin/sh
-# luci-app-rm520n — direct installer for OpenWrt 25.12
+# luci-app-rm520n - direct installer for OpenWrt 25.12
 # Copies files directly to the router filesystem (no build system needed).
 #
 # Usage (local):  sh install.sh [--uninstall]
@@ -121,7 +121,7 @@ EOF
     sed -i '/rm520n-watchdog/d' /etc/crontabs/root 2>/dev/null || true
     /etc/init.d/cron reload 2>/dev/null || true
 
-    # Enable procd service for boot persistence (does not start it —
+    # Enable procd service for boot persistence (does not start it -
     # user enables via LuCI settings)
     /etc/init.d/rm520n-watchdog enable 2>/dev/null || true
 }
@@ -165,7 +165,7 @@ _uninstall() {
 
 _ensure_deps() {
     command -v stty >/dev/null 2>&1 && return 0
-    printf '[INFO] stty not found — installing coreutils-stty (required for AT port)...\n'
+    printf '[INFO] stty not found - installing coreutils-stty (required for AT port)...\n'
     if command -v apk >/dev/null 2>&1; then
         apk add coreutils-stty || { printf 'ERROR: failed to install coreutils-stty\n' >&2; exit 1; }
     elif command -v opkg >/dev/null 2>&1; then

@@ -280,7 +280,7 @@ _parse_qgdcnt() {
 }
 
 # +QCAINFO: "pcc|scc",earfcn,bw,"TECH BAND N",dl_state,pci,rsrp,rsrq,rssi,sinr
-# NR5G SCC may use short format (5 fields): "scc",earfcn,bw,"NR5G BAND N",pci — no signal data.
+# NR5G SCC may use short format (5 fields): "scc",earfcn,bw,"NR5G BAND N",pci - no signal data.
 # Builds and prints a JSON array (or null if no data).
 _build_ca_json() {
     local raw="$1" tmpf="/tmp/_rm520n_ca_$$" _first _line _data
@@ -356,7 +356,7 @@ _parse_reg_stat() {
 
 # ── Combined methods ──────────────────────────────────────────────────────────
 
-# Full status — used on page load.
+# Full status - used on page load.
 # Sends 15 AT commands sequentially, each isolated: response captured before
 # the next command is sent. tty configured with VTIME=3 (300ms read timeout)
 # so each dd count=1 read returns promptly when the modem responds.
@@ -474,7 +474,7 @@ _method_full_status() {
     printf '}'
 }
 
-# Live refresh — signal + cell detail + per-antenna RSRP. Used by 10s poll.
+# Live refresh - signal + cell detail + per-antenna RSRP. Used by 10s poll.
 _method_refresh() {
     _find_at_port || { printf '{"error":"AT port not found"}'; return; }
     _at_lock      || { printf '{"error":"AT port busy"}';      return; }
@@ -731,7 +731,7 @@ _method_set_config() {
     # Remove legacy cron entry if present
     sed -i '/rm520n-watchdog/d' /etc/crontabs/root 2>/dev/null || true
     /etc/init.d/cron reload 2>/dev/null || true
-    # Manage procd service — service_triggers() in the init script reloads on
+    # Manage procd service - service_triggers() in the init script reloads on
     # uci commit, but call explicitly here for the enabled=0 stop case.
     if [ "$enabled" = "1" ]; then
         /etc/init.d/rm520n-watchdog enable  2>/dev/null || true
@@ -744,7 +744,7 @@ _method_set_config() {
 }
 
 # ── JSON-RPC dispatcher ────────────────────────────────────────────────────────
-# stdin is a pipe — jsonfilter consumes it on first read; read once and re-pipe.
+# stdin is a pipe - jsonfilter consumes it on first read; read once and re-pipe.
 _RPC_BODY="$(cat)"
 _jf() { printf '%s' "$_RPC_BODY" | jsonfilter -e "$1" 2>/dev/null; }
 
