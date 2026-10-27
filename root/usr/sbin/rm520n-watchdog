@@ -4,12 +4,18 @@
 # failures triggers the configured action. Cascade mode escalates in three
 # stages: reconnect -> reboot_modem -> reboot_router, one stage per threshold
 # hit, as long as connectivity keeps failing.
+#
+# Every failed check is classified (gateway down, no route, mobile data down,
+# or only the primary host unreachable) and incidents, recovery actions and
+# serving cell changes are written to an event log for the Tools page.
 
 FAIL_FILE="/tmp/rm520n_watchdog_fails"
 STAGE_FILE="/tmp/rm520n_watchdog_stage"
 LAST_OK_FILE="/tmp/rm520n_watchdog_last_ok"
 COUNTERS_FILE="/tmp/rm520n_watchdog_counters"
 NO_MODEM_FILE="/tmp/rm520n_watchdog_no_modem"
+EVENTS_MAX=300
+CELL_EVERY=60
 
 _cfg() { uci -q get "rm520n.watchdog.$1" 2>/dev/null; }
 
@@ -107,7 +113,67 @@ _modem_ready() {
     return 1
 }
 
+_event() {
+    printf '%s %s\n' "$(date +%s)" "$*" >> "$EVENTS"
+    if [ "$(wc -l < "$EVENTS")" -gt "$EVENTS_MAX" ]; then
+        tail -n "$EVENTS_MAX" "$EVENTS" > "$EVENTS.tmp" && mv "$EVENTS.tmp" "$EVENTS"
+    fi
+}
+
+# Sets cell_sig (the primary serving cell) and cell_signal from one rpcd
+# refresh() call. SCCs are left out of cell_sig because they come and go with
+# RRC state and traffic. Returns 1 if the modem did not answer.
+_cell_state() {
+    local raw tech band pci cell rsrp sinr sccb sccp b scc=""
+    raw="$(ubus call rm520n refresh 2>/dev/null)"
+    [ -z "$raw" ] && return 1
+    eval "$(printf '%s' "$raw" | jsonfilter -e 'tech=@.technology' -e 'band=@.band' \
+        -e 'pci=@.pci' -e 'cell=@.cell_id' -e 'rsrp=@.rsrp' -e 'sinr=@.sinr' \
+        -e 'sccb=@.ca[@.type="SCC"].band' -e 'sccp=@.ca[@.type="SCC"].pci' 2>/dev/null)"
+    set -- $sccp
+    for b in $sccb; do
+        scc="${scc}${scc:+,}b${b}/${1:-?}"
+        shift
+    done
+    cell_sig="tech=${tech:-?} band=${band:-?} pci=${pci:-?} cell=${cell:-?}"
+    cell_signal="scc=${scc:-none} rsrp=${rsrp:-?} sinr=${sinr:-?}"
+}
+
+_check_cell() {
+    _cell_state || return
+    [ "$cell_sig" = "$last_cell" ] && return
+    _event "cell $cell_sig $cell_signal"
+    last_cell="$cell_sig"
+}
+
+_classify_failure() {
+    case "$(_gw_ping)" in
+        down)    printf 'modem_unreachable' ;;
+        unknown) printf 'no_route' ;;
+        *)       ping -c 1 -W 3 "$host2" > /dev/null 2>&1 && printf 'target_only' || printf 'wwan_down' ;;
+    esac
+}
+
+# $2 is when the check started, so durations are not shortened by the time
+# a failing ping spends waiting for its timeouts.
+_track_incident() {
+    local v="$1" now="$2"
+    [ "$v" = "ok" ] && v=""
+    [ "$v" = "$incident" ] && return
+    if [ -n "$incident" ]; then
+        _event "incident_end verdict=$incident duration=$(( now - incident_start ))"
+        logger -t rm520n-watchdog "incident ended: $incident after $(( now - incident_start ))s"
+    fi
+    incident="$v"
+    incident_start="$now"
+    [ -z "$v" ] && return
+    _cell_state || { cell_sig="modem=unavailable"; cell_signal=""; }
+    _event "incident_start verdict=$v $cell_sig $cell_signal"
+    logger -t rm520n-watchdog "incident started: $v"
+}
+
 _trigger_reconnect() {
+    _event "action name=reconnect"
     logger -t rm520n-watchdog "threshold reached - action: reconnect [$(_signal_snapshot)]"
     printf '1' > "$STAGE_FILE"
     rm -f "$FAIL_FILE"
@@ -116,6 +182,7 @@ _trigger_reconnect() {
 }
 
 _trigger_reboot_modem() {
+    _event "action name=reboot_modem"
     logger -t rm520n-watchdog "threshold reached - action: reboot_modem [$(_signal_snapshot)]"
     printf '2' > "$STAGE_FILE"
     rm -f "$FAIL_FILE"
@@ -128,6 +195,7 @@ _trigger_reboot_modem() {
 }
 
 _trigger_reboot_router() {
+    _event "action name=reboot_router"
     logger -t rm520n-watchdog "threshold reached - action: reboot_router (full system reboot) [$(_signal_snapshot)]"
     rm -f "$FAIL_FILE" "$STAGE_FILE"
     sync
@@ -138,6 +206,11 @@ _trigger_reboot_router() {
     sleep 120
 }
 
+incident=""
+incident_start=0
+last_cell=""
+next_cell=0
+
 while true; do
     [ -f /etc/config/rm520n ] || { sleep 30; continue; }
 
@@ -147,8 +220,23 @@ while true; do
     threshold="$(_cfg fail_threshold)"; threshold="${threshold:-3}"
     action="$(_cfg action)";         action="${action:-reboot_modem}"
     interval="$(_cfg interval)";     interval="${interval:-10}"
+    host2="$(_cfg ping_host2)";      host2="${host2:-1.1.1.1}"
+    log_dir="$(_cfg log_dir)";       EVENTS="${log_dir:-/tmp/rm520n}/events.log"
+    mkdir -p "${EVENTS%/*}"
 
-    if ping -c 2 -W 3 "$host" > /dev/null 2>&1; then
+    if [ "$(date +%s)" -ge "$next_cell" ]; then
+        _check_cell
+        next_cell=$(( $(date +%s) + CELL_EVERY ))
+    fi
+
+    check_start="$(date +%s)"
+    verdict="ok"
+    ping -c 2 -W 3 "$host" > /dev/null 2>&1 || verdict="$(_classify_failure)"
+    _track_incident "$verdict" "$check_start"
+
+    # The connection itself works when only the primary host is unreachable,
+    # so a recovery action could not fix anything.
+    if [ "$verdict" = "ok" ] || [ "$verdict" = "target_only" ]; then
         rm -f "$FAIL_FILE" "$STAGE_FILE"
         date +%s > "$LAST_OK_FILE"
         sleep "$interval"
@@ -158,9 +246,9 @@ while true; do
     fails="$(cat "$FAIL_FILE" 2>/dev/null)"
     fails=$(( ${fails:-0} + 1 ))
     printf '%d' "$fails" > "$FAIL_FILE"
-    logger -t rm520n-watchdog "ping $host failed ($fails/$threshold)"
+    logger -t rm520n-watchdog "ping $host failed ($fails/$threshold, $verdict)"
 
-    if [ "$fails" -lt "$threshold" ]; then
+    if [ "$fails" -lt "$threshold" ] || [ "$action" = "monitor" ]; then
         sleep "$interval"
         continue
     fi
@@ -168,6 +256,7 @@ while true; do
     if ! _modem_ready; then
         if [ ! -f "$NO_MODEM_FILE" ]; then
             logger -t rm520n-watchdog "threshold reached but no modem AT port or rm520n rpcd object - skipping $action, monitoring continues"
+            _event "action_skipped reason=no_modem action=$action"
             touch "$NO_MODEM_FILE"
         fi
         rm -f "$FAIL_FILE"
