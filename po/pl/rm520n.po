@@ -152,11 +152,11 @@ msgstr "Zmiany komórki (24 h)"
 
 #: htdocs/luci-static/resources/view/rm520n/overview.js:402
 msgid "Cell ID"
-msgstr "ID komórki"
+msgstr "ID komórki (Cell ID)"
 
 #: htdocs/luci-static/resources/view/rm520n/overview.js:395
 msgid "Cell Info"
-msgstr "Informacje o komórce"
+msgstr "Stacja bazowa"
 
 #: htdocs/luci-static/resources/view/rm520n/tools.js:376
 msgid "Checked only when the ping host fails. If it answers, the connection works and the failure does not count toward the threshold."
@@ -164,7 +164,7 @@ msgstr "Sprawdzany tylko wtedy, gdy główny host nie odpowiada. Jeśli ten odpo
 
 #: htdocs/luci-static/resources/view/rm520n/tools.js:518
 msgid "Connection Log"
-msgstr "Dziennik połączenia"
+msgstr "Dziennik połączeń"
 
 #: htdocs/luci-static/resources/view/rm520n/overview.js:463
 msgid "Data Counters"
@@ -293,7 +293,7 @@ msgstr "Wiadomości"
 
 #: htdocs/luci-static/resources/view/rm520n/tools.js:77
 msgid "Mobile data down"
-msgstr "Brak danych komórkowych"
+msgstr "Brak transmisji danych"
 
 #: htdocs/luci-static/resources/view/rm520n/settings.js:103
 msgid "Mode set to: %s"
@@ -313,7 +313,7 @@ msgstr "Modem uruchamia się ponownie..."
 
 #: htdocs/luci-static/resources/view/rm520n/tools.js:75
 msgid "Modem/board unreachable"
-msgstr "Modem/płytka nieosiągalne"
+msgstr "Modem nieosiągalny"
 
 #: htdocs/luci-static/resources/view/rm520n/tools.js:71
 msgid "Monitor only (log incidents, no recovery action)"
