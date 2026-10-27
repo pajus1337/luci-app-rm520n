@@ -28,6 +28,8 @@ When the RM520NGL modem operates in **PCIe/GbE mode** (via the Waveshare carrier
 - **Per-antenna RSRP** - RX0-RX3 individual signal levels with colour coding
 - **Temperature panel** - all active modem sensors with colour-coded values (green / amber / orange / red)
 - **Data counters** - modem-side TX/RX byte totals via `AT+QGDCNT?`
+- **SMS inbox** - messages stored on the modem, decoded in the browser (GSM 7-bit, UCS2, multipart messages joined), with delete
+- **USSD** - send a code such as a balance check and read the answer, including replies inside USSD menus
 - **Band configuration** - toggle chip buttons per LTE/NR band, All/None shortcuts, Apply per RAT, Reset All Bands
 - **Network mode** - switch between AUTO / LTE / NR5G / LTE:NR5G
 - **APN configuration** - change APN without touching UCI
@@ -102,6 +104,7 @@ LuCI browser (JavaScript view)
 |---|---|
 | `root/usr/libexec/rpcd/rm520n` | Shell script backend - handles JSON-RPC calls, queries modem via AT |
 | `htdocs/.../view/rm520n/overview.js` | LuCI JavaScript view - cards, signal bars, controls, auto-refresh |
+| `htdocs/.../view/rm520n/messages.js` | LuCI JavaScript view - SMS inbox (PDU decoding) and USSD |
 | `htdocs/.../view/rm520n/tools.js` | LuCI JavaScript view - watchdog configuration and status, connection log, manual reconnect/reboot |
 | `htdocs/.../view/rm520n/settings.js` | LuCI JavaScript view - band configuration, network mode, APN |
 | `root/usr/sbin/rm520n-watchdog` | Connectivity watchdog daemon (procd-managed) |
@@ -128,6 +131,10 @@ LuCI browser (JavaScript view)
 | `get_config` | read | Watchdog config, status, last successful check, event history |
 | `set_config` | write | Update watchdog config (hosts, interval, threshold, action, log directory) and (re)start the daemon |
 | `get_events` | read | Connection log written by the watchdog (outages, actions, cell changes) |
+| `sms_list` | read | Raw PDUs of the stored messages (`AT+CMGL=4`) and storage usage; marks unread messages as read |
+| `sms_delete` | write | Delete messages by storage index (`AT+CMGD`) |
+| `ussd` | write | Send a USSD code or menu reply (`AT+CUSD=1`) and return the network's answer |
+| `ussd_cancel` | write | End an open USSD session (`AT+CUSD=2`) |
 
 ---
 
