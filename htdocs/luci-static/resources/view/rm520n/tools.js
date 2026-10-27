@@ -104,7 +104,7 @@ function statusText(wd) {
     var ivl   = parseInt(wd.interval) || 10;
     if (fails === 0) {
         return E('span', { 'class': 'rm-status-ok' },
-            _('Active — polling every ') + ivl + 's, no failures');
+            _('Active - polling every ') + ivl + 's, no failures');
     }
     var cls = fails >= thr ? 'rm-status-err' : 'rm-status-warn';
     return E('span', { 'class': cls },
@@ -181,7 +181,7 @@ return view.extend({
         ]);
 
         var watchdogCard = E('div', { 'class': 'rm-card' }, [
-            E('h3', {}, _('Automatic Recovery — Connectivity Watchdog')),
+            E('h3', {}, _('Automatic Recovery - Connectivity Watchdog')),
             E('table', { 'class': 'rm-table' }, [
                 E('tr', {}, [
                     E('td', {}, _('Enabled')),
@@ -285,7 +285,7 @@ return view.extend({
                                     hi.appendChild(buildHistoryBlock(w.history));
                                 }
                                 ui.addNotification(null,
-                                    E('p', _('Saved — enabled: ') + (String(w.enabled) === '1' ? _('yes') : _('no'))
+                                    E('p', _('Saved - enabled: ') + (String(w.enabled) === '1' ? _('yes') : _('no'))
                                         + ', host: ' + (w.ping_host || '8.8.8.8')
                                         + ', every: ' + (w.interval || 10) + 's'
                                         + ', threshold: ' + (w.fail_threshold || 3)

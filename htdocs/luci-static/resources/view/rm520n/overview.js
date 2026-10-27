@@ -112,7 +112,7 @@ function voltageColor(mv) {
 }
 
 function fmtUptime(s) {
-    if (!s) return '—';
+    if (!s) return '-';
     s = s.trim();
     var dm = s.match(/(\d+)\s+days?,\s*(\d+):(\d+)/);
     var hm = s.match(/^(\d+):(\d+)$/);
@@ -122,7 +122,7 @@ function fmtUptime(s) {
 }
 
 function fmtRate(bps) {
-    if (isNaN(bps) || bps < 0) return '—';
+    if (isNaN(bps) || bps < 0) return '-';
     if (bps >= 1048576) return (bps / 1048576).toFixed(2) + ' MB/s';
     if (bps >= 1024)    return (bps / 1024).toFixed(1)    + ' KB/s';
     return Math.round(bps) + ' B/s';
@@ -206,23 +206,23 @@ function techBadge(tech) {
     return E('span', {
         'class': 'rm-badge',
         'style': 'background:' + (colors[tech] || '#475569') + ';color:#fff'
-    }, tech || '—');
+    }, tech || '-');
 }
 
 function cregBadge(text) {
     var ok = text && text.indexOf('Registered') >= 0;
-    return E('span', { 'style': 'color:' + (ok ? 'var(--green)' : 'var(--red)') }, text || '—');
+    return E('span', { 'style': 'color:' + (ok ? 'var(--green)' : 'var(--red)') }, text || '-');
 }
 
 function rrcBadge(rrc) {
     return E('span', {
         'style': 'color:' + (rrc === 'CONNECT' ? 'var(--green)' : 'var(--muted)')
-    }, rrc || '—');
+    }, rrc || '-');
 }
 
 function signalBar(rsrp) {
     var v = parseInt(rsrp);
-    if (isNaN(v)) return E('span', { 'style': 'color:var(--muted)' }, '—');
+    if (isNaN(v)) return E('span', { 'style': 'color:var(--muted)' }, '-');
     var pct = Math.max(0, Math.min(100, (v + 140) / 80 * 100));
     return E('div', { 'class': 'rm-bar-wrap' }, [
         E('div', { 'class': 'rm-bar-bg' }, [
@@ -235,7 +235,7 @@ function signalBar(rsrp) {
 
 function fmtBytes(n) {
     var v = parseInt(n);
-    if (isNaN(v) || v <= 0) return '—';
+    if (isNaN(v) || v <= 0) return '-';
     if (v >= 1073741824) return (v / 1073741824).toFixed(2) + ' GB';
     if (v >= 1048576)    return (v / 1048576).toFixed(1)    + ' MB';
     if (v >= 1024)       return Math.round(v / 1024)        + ' KB';
@@ -245,7 +245,7 @@ function fmtBytes(n) {
 function row(label, value) {
     return E('tr', {}, [
         E('td', {}, label),
-        E('td', {}, value != null ? value : '—')
+        E('td', {}, value != null ? value : '-')
     ]);
 }
 
@@ -258,7 +258,7 @@ function setEl(id, child) {
     } else if (child != null && child !== '') {
         el.textContent = String(child);
     } else {
-        el.textContent = '—';
+        el.textContent = '-';
     }
 }
 
@@ -289,14 +289,14 @@ function updateSignal(d) {
         if (!el) return;
         var v = d['rsrp_' + rx];
         el.style.color = v != null ? qualityColor(v) : 'var(--muted)';
-        el.textContent = v != null ? v + ' dBm' : '—';
+        el.textContent = v != null ? v + ' dBm' : '-';
     });
     ['rx0', 'rx1', 'rx2', 'rx3'].forEach(function(rx) {
         var el = document.getElementById('ant-nr-' + rx);
         if (!el) return;
         var v = d['rsrp_nr_' + rx];
         el.style.color = v != null ? qualityColor(v) : 'var(--muted)';
-        el.textContent = v != null ? v + ' dBm' : '—';
+        el.textContent = v != null ? v + ' dBm' : '-';
     });
     var hasNr = ['rx0', 'rx1', 'rx2', 'rx3'].some(function(rx) { return d['rsrp_nr_' + rx] != null; });
     var nrSec  = document.getElementById('ant-nr-section');
@@ -333,7 +333,7 @@ function updateSignal(d) {
                 d.ca.forEach(function(c) { caBody.appendChild(buildCaRow(c)); });
             } else {
                 caBody.style.color = 'var(--muted)';
-                caBody.textContent = '—';
+                caBody.textContent = '-';
             }
         }
     }
@@ -349,26 +349,26 @@ return view.extend({
     render: function(d) {
         d = d || {};
 
-        // Card 1 — Modem identity
+        // Card 1 - Modem identity
         var supplyMv = parseInt(d.supply_mv);
         var infoCard = E('div', { 'class': 'rm-card' }, [
             E('h3', {}, _('Modem')),
             E('table', { 'class': 'rm-table' }, [
-                row(_('Firmware'),       d.firmware || '—'),
-                row(_('IMEI'),           d.imei     || '—'),
-                row(_('AT Port'),        d.at_port  || '—'),
+                row(_('Firmware'),       d.firmware || '-'),
+                row(_('IMEI'),           d.imei     || '-'),
+                row(_('AT Port'),        d.at_port  || '-'),
                 row(_('Uptime'),         fmtUptime(d.uptime)),
                 row(_('Supply Voltage'), E('span', { 'id': 'modem-voltage',
                     'style': 'color:' + voltageColor(supplyMv) + ';font-weight:600' },
-                    !isNaN(supplyMv) ? (supplyMv / 1000).toFixed(3) + ' V (' + supplyMv + ' mV)' : '—')),
-                row(_('Operator'),       d.operator || '—'),
-                row(_('MCC / MNC'),      d.mcc && d.mnc ? d.mcc + ' / ' + d.mnc : '—'),
+                    !isNaN(supplyMv) ? (supplyMv / 1000).toFixed(3) + ' V (' + supplyMv + ' mV)' : '-')),
+                row(_('Operator'),       d.operator || '-'),
+                row(_('MCC / MNC'),      d.mcc && d.mnc ? d.mcc + ' / ' + d.mnc : '-'),
                 row(_('LTE Reg'),        cregBadge(d.creg)),
                 row(_('5G NR Reg'),      cregBadge(d.c5greg)),
             ])
         ]);
 
-        // Card 2 — Signal quality (live)
+        // Card 2 - Signal quality (live)
         var signalCard = E('div', { 'class': 'rm-card' }, [
             E('div', { 'class': 'rm-head' }, [
                 E('h3', {}, _('Signal')),
@@ -377,42 +377,42 @@ return view.extend({
             ]),
             E('table', { 'class': 'rm-table' }, [
                 row('RSSI', E('span', { 'id': 'sig-rssi' },
-                    d.rssi != null ? d.rssi + ' dBm' : '—')),
+                    d.rssi != null ? d.rssi + ' dBm' : '-')),
                 row('RSRP', E('div', { 'id': 'sig-rsrp' }, [ signalBar(d.rsrp) ])),
                 row('SINR', E('span', { 'id': 'sig-sinr' },
                     d.sinr != null
                         ? [ E('span', { 'style': 'color:' + sinrColor(d.sinr) }, d.sinr + ' dB') ]
-                        : '—')),
+                        : '-')),
                 row('RSRQ', E('span', { 'id': 'sig-rsrq' },
                     d.rsrq != null
                         ? [ E('span', { 'style': 'color:' + rsrqColor(d.rsrq) }, d.rsrq + ' dB') ]
-                        : '—')),
+                        : '-')),
             ])
         ]);
 
-        // Card 3 — Cell info (live)
+        // Card 3 - Cell info (live)
         var cellCard = E('div', { 'class': 'rm-card' }, [
             E('h3', {}, _('Cell Info')),
             E('table', { 'class': 'rm-table' }, [
                 row(_('RRC State'), E('span', { 'id': 'cell-rrc'    }, [ rrcBadge(d.rrc_state) ])),
-                row(_('Band'),      E('span', { 'id': 'cell-band'   }, d.band   != null ? 'B' + d.band     : '—')),
-                row(_('Duplex'),    d.duplex || '—'),
-                row(_('EARFCN'),    E('span', { 'id': 'cell-earfcn' }, d.earfcn != null ? String(d.earfcn) : '—')),
-                row(_('PCI'),       E('span', { 'id': 'cell-pci'    }, d.pci    != null ? String(d.pci)    : '—')),
-                row(_('Cell ID'),   E('span', { 'id': 'cell-id-wrap' }, [ buildCellIdBlock(d) || '—' ])),
-                row(_('TAC'), d.tac || '—'),
+                row(_('Band'),      E('span', { 'id': 'cell-band'   }, d.band   != null ? 'B' + d.band     : '-')),
+                row(_('Duplex'),    d.duplex || '-'),
+                row(_('EARFCN'),    E('span', { 'id': 'cell-earfcn' }, d.earfcn != null ? String(d.earfcn) : '-')),
+                row(_('PCI'),       E('span', { 'id': 'cell-pci'    }, d.pci    != null ? String(d.pci)    : '-')),
+                row(_('Cell ID'),   E('span', { 'id': 'cell-id-wrap' }, [ buildCellIdBlock(d) || '-' ])),
+                row(_('TAC'), d.tac || '-'),
             ])
         ]);
 
-        // Card 4 — Carrier Aggregation
+        // Card 4 - Carrier Aggregation
         var caCard = E('div', { 'class': 'rm-card' }, [
             E('h3', {}, _('Carrier Aggregation')),
             (d.ca && d.ca.length)
                 ? E('div', { 'id': 'ca-body' }, d.ca.map(buildCaRow))
-                : E('div', { 'id': 'ca-body', 'style': 'color:var(--muted)' }, '—')
+                : E('div', { 'id': 'ca-body', 'style': 'color:var(--muted)' }, '-')
         ]);
 
-        // Card 5 — Per-antenna RSRP (live)
+        // Card 5 - Per-antenna RSRP (live)
         var rxKeys = ['rx0', 'rx1', 'rx2', 'rx3'];
         var hasNr = rxKeys.some(function(rx) { return d['rsrp_nr_' + rx] != null; });
         var antCard = E('div', { 'class': 'rm-card' }, [
@@ -425,7 +425,7 @@ return view.extend({
                     E('div', { 'class': 'rm-ant-label' }, rx.toUpperCase()),
                     E('div', { 'class': 'rm-ant-val', 'id': 'ant-' + rx,
                         'style': 'color:' + (v != null ? qualityColor(v) : 'var(--muted)') },
-                        v != null ? v + ' dBm' : '—')
+                        v != null ? v + ' dBm' : '-')
                 ]);
             })),
             E('div', { 'id': 'ant-nr-section', 'style': hasNr ? '' : 'display:none' }, [
@@ -436,13 +436,13 @@ return view.extend({
                         E('div', { 'class': 'rm-ant-label' }, rx.toUpperCase()),
                         E('div', { 'class': 'rm-ant-val', 'id': 'ant-nr-' + rx,
                             'style': 'color:' + (v != null ? qualityColor(v) : 'var(--muted)') },
-                            v != null ? v + ' dBm' : '—')
+                            v != null ? v + ' dBm' : '-')
                     ]);
                 }))
             ])
         ]);
 
-        // Card 6 — Temperature (sensor names vary by firmware)
+        // Card 6 - Temperature (sensor names vary by firmware)
         var tempCard = E('div', { 'class': 'rm-card' }, [
             E('h3', {}, _('Temperature')),
             (d.temps && d.temps.length)
@@ -452,20 +452,20 @@ return view.extend({
                         return row(label, t.value != null
                             ? E('span', { 'style': 'color:' + tempColor(t.value) + ';font-weight:600' },
                                 t.value + ' °C')
-                            : '—');
+                            : '-');
                     })
                   )
-                : E('span', { 'style': 'color:var(--muted)' }, '—')
+                : E('span', { 'style': 'color:var(--muted)' }, '-')
         ]);
 
-        // Card 7 — Data counters
+        // Card 7 - Data counters
         var countersCard = E('div', { 'class': 'rm-card' }, [
             E('h3', {}, _('Data Counters')),
             E('table', { 'class': 'rm-table' }, [
                 row(_('TX'),       E('span', { 'id': 'counter-tx' }, fmtBytes(d.modem_tx))),
                 row(_('RX'),       E('span', { 'id': 'counter-rx' }, fmtBytes(d.modem_rx))),
-                row(_('TX Speed'), E('span', { 'id': 'counter-tx-speed' }, '—')),
-                row(_('RX Speed'), E('span', { 'id': 'counter-rx-speed' }, '—')),
+                row(_('TX Speed'), E('span', { 'id': 'counter-tx-speed' }, '-')),
+                row(_('RX Speed'), E('span', { 'id': 'counter-rx-speed' }, '-')),
             ]),
             E('div', { 'style': 'margin-top:8px' }, [
                 E('button', { 'class': 'rm-btn rm-btn-default',
@@ -474,8 +474,8 @@ return view.extend({
                             _prevCounters = null;
                             setEl('counter-tx', '0 B');
                             setEl('counter-rx', '0 B');
-                            setEl('counter-tx-speed', '—');
-                            setEl('counter-rx-speed', '—');
+                            setEl('counter-tx-speed', '-');
+                            setEl('counter-rx-speed', '-');
                         });
                     }
                 }, _('Reset Counters'))
