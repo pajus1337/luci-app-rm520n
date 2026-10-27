@@ -16,6 +16,7 @@ PANEL_FILES="
 /www/luci-static/resources/view/rm520n/overview.js
 /www/luci-static/resources/view/rm520n/tools.js
 /www/luci-static/resources/view/rm520n/settings.js
+/www/luci-static/resources/view/rm520n/messages.js
 /usr/sbin/rm520n-watchdog
 /etc/init.d/rm520n-watchdog
 "
@@ -58,7 +59,8 @@ _download() {
         root/etc/init.d/rm520n-watchdog \
         htdocs/luci-static/resources/view/rm520n/overview.js \
         htdocs/luci-static/resources/view/rm520n/tools.js \
-        htdocs/luci-static/resources/view/rm520n/settings.js
+        htdocs/luci-static/resources/view/rm520n/settings.js \
+        htdocs/luci-static/resources/view/rm520n/messages.js
     do
         wget -qO "${dir}/${f}" "${base}/${f}" || { printf 'ERROR: failed to download %s\n' "$f" >&2; exit 1; }
         printf '  Downloaded: %s\n' "$f"
@@ -94,6 +96,8 @@ _install_files() {
         /www/luci-static/resources/view/rm520n/tools.js
     _cp 644 "${src}/htdocs/luci-static/resources/view/rm520n/settings.js" \
         /www/luci-static/resources/view/rm520n/settings.js
+    _cp 644 "${src}/htdocs/luci-static/resources/view/rm520n/messages.js" \
+        /www/luci-static/resources/view/rm520n/messages.js
 
     printf '[INFO] Installing watchdog daemon and init script...\n'
     _cp 755 "${src}/root/usr/sbin/rm520n-watchdog" \

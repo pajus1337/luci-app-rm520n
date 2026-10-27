@@ -43,10 +43,10 @@ _drain_at_port() {
     stty -F "$AT_PORT" -icanon min 0 time 3 2>/dev/null || true
 }
 
-# Configure tty, send one AT command, read until OK/ERROR/CME ERROR or timeout.
-# Opens and closes fd3 per call. Safe for use by individual debug methods.
+# Configure tty, send one AT command, read until OK/ERROR/CME ERROR (or the
+# optional ERE in $3) or timeout. Opens and closes fd3 per call.
 _at() {
-    local cmd="$1" max="${2:-4}" i=0
+    local cmd="$1" max="${2:-4}" stop="${3:-^(OK|ERROR|\+CME ERROR)}" i=0
     local tmpf="/tmp/_rm520n_at_$$"
     : > "$tmpf"
     stty -F "$AT_PORT" -opost -onlcr -icrnl -icanon -ixon -ixoff -hupcl -echo min 0 time 3 2>/dev/null || true
@@ -55,7 +55,7 @@ _at() {
     printf '%s\r\n' "$cmd" >&3
     while [ "$i" -lt "$max" ]; do
         dd <&3 bs=4096 count=1 2>/dev/null >> "$tmpf"
-        grep -qE '^(OK|ERROR|\+CME ERROR)' "$tmpf" 2>/dev/null && break
+        grep -qE "$stop" "$tmpf" 2>/dev/null && break
         i=$(( i + 1 ))
     done
     exec 3>&-
@@ -650,6 +650,65 @@ _method_reset_bands() {
     printf '{"result":"ok"}'
 }
 
+# Raw PDUs from the current message storage; decoding happens in the browser.
+# AT+CMGL marks unread messages as read, like opening them on a phone.
+_method_sms_list() {
+    _find_at_port || { printf '{"error":"AT port not found"}'; return; }
+    _at_lock      || { printf '{"error":"AT port busy"}';      return; }
+    local raw_cpms raw_cmgl storage used total
+    raw_cpms="$(_at 'AT+CPMS?')"
+    _at 'AT+CMGF=0' >/dev/null
+    raw_cmgl="$(_at 'AT+CMGL=4' 40)"
+    _at_unlock
+    eval "$(printf '%s' "$raw_cpms" | tr -d '\r' | awk -F'[:,]' '/^\+CPMS:/ {
+        gsub(/[ "]/, "", $2); printf "storage=%s used=%d total=%d", $2, $3, $4 }')"
+    printf '{"storage":%s,"used":%s,"total":%s,"messages":[' \
+        "$(_json_str "$storage")" "$(_json_num "$used")" "$(_json_num "$total")"
+    printf '%s' "$raw_cmgl" | tr -d '\r' | awk -F'[:,]' '/^\+CMGL:/ {
+        idx = $2 + 0; stat = $3 + 0
+        if ((getline pdu) > 0) {
+            gsub(/[^0-9A-Fa-f]/, "", pdu)
+            printf "%s{\"index\":%d,\"stat\":%d,\"pdu\":\"%s\"}", sep, idx, stat, pdu
+            sep = ","
+        }
+    }'
+    printf ']}'
+}
+
+# indexes: comma-separated storage indexes (all parts of a multipart message).
+_method_sms_delete() {
+    local list="$1" i
+    case "$list" in ''|*[!0-9,]*) printf '{"error":"invalid index"}'; return ;; esac
+    _find_at_port || { printf '{"error":"AT port not found"}'; return; }
+    _at_lock      || { printf '{"error":"AT port busy"}';      return; }
+    for i in $(printf '%s' "$list" | tr ',' ' '); do
+        _at "AT+CMGD=$i" >/dev/null
+    done
+    _at_unlock
+    printf '{"result":"ok"}'
+}
+
+# Sends a USSD code (or a reply inside an open USSD menu) and waits up to ~18 s
+# for the network's +CUSD answer, which arrives as a URC after the command's OK.
+_method_ussd() {
+    local code="$1" raw
+    case "$code" in ''|*[!0-9*#]*) printf '{"error":"invalid USSD code"}'; return ;; esac
+    _find_at_port || { printf '{"error":"AT port not found"}'; return; }
+    _at_lock      || { printf '{"error":"AT port busy"}';      return; }
+    raw="$(_at "AT+CUSD=1,\"${code}\",15" 60 '^(\+CUSD:|ERROR|\+CME ERROR)')"
+    _at_unlock
+    printf '{"raw":"%s"}' "$(printf '%s' "$raw" | tr -d '\r' | awk '{
+        gsub(/\\/, "\\\\"); gsub(/"/, "\\\""); printf "%s%s", (NR > 1 ? "\\n" : ""), $0 }')"
+}
+
+_method_ussd_cancel() {
+    _find_at_port || { printf '{"error":"AT port not found"}'; return; }
+    _at_lock      || { printf '{"error":"AT port busy"}';      return; }
+    _at 'AT+CUSD=2' >/dev/null
+    _at_unlock
+    printf '{"result":"ok"}'
+}
+
 _method_reset_counters() {
     _find_at_port || { printf '{"error":"AT port not found"}'; return; }
     _at_lock      || { printf '{"error":"AT port busy"}';      return; }
@@ -769,7 +828,7 @@ _jf() { printf '%s' "$_RPC_BODY" | jsonfilter -e "$1" 2>/dev/null; }
 
 case "$1" in
     list)
-        printf '{"full_status":{},"refresh":{},"status":{},"signal":{},"cell":{},"bands":{},"set_bands":{"lte_band":"","nr_band":""},"reset_bands":{},"reset_counters":{},"reconnect":{},"set_mode":{"mode":""},"reboot_modem":{},"set_apn":{"apn":""},"get_config":{},"get_events":{},"set_config":{"enabled":"","ping_host":"","fail_threshold":"","action":"","interval":"","ping_host2":"","log_dir":""}}'
+        printf '{"full_status":{},"refresh":{},"status":{},"signal":{},"cell":{},"bands":{},"set_bands":{"lte_band":"","nr_band":""},"reset_bands":{},"reset_counters":{},"reconnect":{},"set_mode":{"mode":""},"reboot_modem":{},"set_apn":{"apn":""},"get_config":{},"get_events":{},"sms_list":{},"sms_delete":{"indexes":""},"ussd":{"code":""},"ussd_cancel":{},"set_config":{"enabled":"","ping_host":"","fail_threshold":"","action":"","interval":"","ping_host2":"","log_dir":""}}'
         ;;
     call)
         case "$2" in
@@ -788,6 +847,10 @@ case "$1" in
             set_apn)       _method_set_apn "$(_jf '@.apn')" ;;
             get_config)    _method_get_config ;;
             get_events)    _method_get_events ;;
+            sms_list)      _method_sms_list ;;
+            sms_delete)    _method_sms_delete "$(_jf '@.indexes')" ;;
+            ussd)          _method_ussd "$(_jf '@.code')" ;;
+            ussd_cancel)   _method_ussd_cancel ;;
             set_config)    _method_set_config \
                                "$(_jf '@.enabled')" \
                                "$(_jf '@.ping_host')" \
