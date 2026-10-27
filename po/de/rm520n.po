@@ -378,7 +378,7 @@ msgstr "Nur der primäre Host nicht erreichbar (24 h)"
 
 #: htdocs/luci-static/resources/view/rm520n/overview.js:364
 msgid "Operator"
-msgstr "Betreiber"
+msgstr "Netzbetreiber"
 
 #: htdocs/luci-static/resources/view/rm520n/tools.js:201
 msgid "Outage time (24 h)"
@@ -610,7 +610,7 @@ msgstr "Sehr gut"
 
 #: htdocs/luci-static/resources/view/rm520n/messages.js:277
 msgid "Waiting for the network..."
-msgstr "Warte auf das Netz..."
+msgstr "Warten auf das Netz..."
 
 #: htdocs/luci-static/resources/view/rm520n/tools.js:520
 msgid "Written by the watchdog: outages classified by what was still reachable, recovery actions, and serving cell changes (checked every 60 s)."
