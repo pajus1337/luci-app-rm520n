@@ -6,8 +6,9 @@
 var callReconnect  = rpc.declare({ object: 'rm520n', method: 'reconnect' });
 var callReboot     = rpc.declare({ object: 'rm520n', method: 'reboot_modem' });
 var callGetConfig  = rpc.declare({ object: 'rm520n', method: 'get_config', expect: {} });
+var callGetEvents  = rpc.declare({ object: 'rm520n', method: 'get_events', expect: {} });
 var callSetConfig  = rpc.declare({ object: 'rm520n', method: 'set_config',
-    params: ['enabled', 'ping_host', 'fail_threshold', 'action', 'interval'] });
+    params: ['enabled', 'ping_host', 'fail_threshold', 'action', 'interval', 'ping_host2', 'log_dir'] });
 
 var CSS =
     '#rm520n-view{'
@@ -55,14 +56,185 @@ var CSS =
     + 'max-height:180px;overflow-y:auto;background:var(--bg);border:1px solid var(--border);'
     + 'border-radius:6px;padding:8px 10px;font-size:.78em;line-height:1.5}'
     + '.rm-history-empty{color:var(--muted)}'
-    + '.rm-history-line{white-space:pre-wrap;word-break:break-all;color:var(--text)}';
+    + '.rm-history-line{white-space:pre-wrap;word-break:break-all;color:var(--text)}'
+    + '.rm-events{max-height:320px}'
+    + '.rm-events table{width:100%;border-collapse:collapse}'
+    + '.rm-events td{padding:3px 10px 3px 0;vertical-align:top}'
+    + '.rm-events td:first-child{color:var(--muted);white-space:nowrap}'
+    + '.rm-events td:nth-child(2){white-space:nowrap}';
 
 var ACTION_LABELS = {
     'reconnect':     'Reconnect only (CFUN=4→1, ~5 s)',
     'reboot_modem':  'Reboot modem (AT+CFUN=1,1, ~40-45 s)',
     'cascade':       'Cascade: reconnect → reboot modem → reboot router',
-    'reboot_router': 'Reboot router (full OpenWrt restart, ~60 s)'
+    'reboot_router': 'Reboot router (full OpenWrt restart, ~60 s)',
+    'monitor':       'Monitor only (log incidents, no recovery action)'
 };
+
+var VERDICT_LABELS = {
+    'modem_unreachable': 'Modem/board unreachable',
+    'no_route':          'No default route',
+    'wwan_down':         'Mobile data down',
+    'target_only':       'Only primary host unreachable'
+};
+
+function parseEvent(line) {
+    var p = String(line).split(' ');
+    var kv = {};
+    p.slice(2).forEach(function(x) {
+        var i = x.indexOf('=');
+        if (i > 0) kv[x.slice(0, i)] = x.slice(i + 1);
+    });
+    return { t: parseInt(p[0]) || 0, type: p[1] || '', kv: kv };
+}
+
+function pad2(n) { return (n < 10 ? '0' : '') + n; }
+
+function fmtTime(t) {
+    var d = new Date(t * 1000);
+    return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate())
+        + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ':' + pad2(d.getSeconds());
+}
+
+function fmtDuration(sec) {
+    var s = parseInt(sec) || 0;
+    if (s < 60) return s + ' s';
+    if (s < 3600) return Math.floor(s / 60) + ' min ' + (s % 60) + ' s';
+    return Math.floor(s / 3600) + ' h ' + Math.floor((s % 3600) / 60) + ' min';
+}
+
+function verdictLabel(v) { return _(VERDICT_LABELS[v] || v || '?'); }
+
+function cellSig(kv) {
+    return [kv.tech, kv.band, kv.pci, kv.cell].join('|');
+}
+
+function cellText(kv) {
+    if (kv.modem) return _('modem did not answer');
+    var parts = [ (kv.tech || '?') + ' band ' + (kv.band || '?'),
+        'PCI ' + (kv.pci || '?'), 'cell ' + (kv.cell || '?') ];
+    if (kv.scc && kv.scc !== 'none') parts.push('SCC ' + kv.scc);
+    if (kv.rsrp) parts.push('RSRP ' + kv.rsrp + ' dBm, SINR ' + (kv.sinr || '?') + ' dB');
+    return parts.join(', ');
+}
+
+// Adds .label/.cls/.details to each event and collects 24 h totals. A cell
+// line equal to the previous one is the baseline the watchdog logs on start,
+// not a change.
+function analyseEvents(lines) {
+    var evs = (lines || []).map(parseEvent);
+    var since = Math.floor(Date.now() / 1000) - 86400;
+    var sum = { outages: {}, outageCount: 0, outageSec: 0, targetOnly: 0, cellChanges: 0, actions: 0 };
+    var prevCell = null;
+    evs.forEach(function(e) {
+        var recent = e.t >= since;
+        switch (e.type) {
+        case 'incident_start':
+            e.label = _('Outage') + ': ' + verdictLabel(e.kv.verdict);
+            e.cls = e.kv.verdict === 'target_only' ? 'rm-status-warn' : 'rm-status-err';
+            e.details = cellText(e.kv);
+            if (recent && e.kv.verdict === 'target_only') sum.targetOnly++;
+            else if (recent) {
+                sum.outageCount++;
+                sum.outages[e.kv.verdict] = (sum.outages[e.kv.verdict] || 0) + 1;
+            }
+            break;
+        case 'incident_end':
+            e.label = _('Recovered');
+            e.cls = 'rm-status-ok';
+            e.details = verdictLabel(e.kv.verdict) + ', ' + _('after') + ' ' + fmtDuration(e.kv.duration);
+            if (recent && e.kv.verdict !== 'target_only') sum.outageSec += parseInt(e.kv.duration) || 0;
+            break;
+        case 'cell':
+            var changed = prevCell !== null && prevCell !== cellSig(e.kv);
+            e.label = changed ? _('Cell change') : _('Serving cell');
+            e.cls = changed ? 'rm-status-warn' : '';
+            e.details = cellText(e.kv);
+            if (recent && changed) sum.cellChanges++;
+            prevCell = cellSig(e.kv);
+            break;
+        case 'action':
+            e.label = _('Recovery action');
+            e.cls = 'rm-status-warn';
+            e.details = e.kv.name || '?';
+            if (recent) sum.actions++;
+            break;
+        case 'action_skipped':
+            e.label = _('Action skipped');
+            e.cls = 'rm-status-off';
+            e.details = (e.kv.action || '?') + ': ' + _('no modem AT port');
+            break;
+        default:
+            e.label = e.type;
+            e.cls = '';
+            e.details = '';
+        }
+    });
+    return { events: evs, sum: sum };
+}
+
+function buildEventsBlock(res) {
+    var a = analyseEvents(res && res.events);
+    var s = a.sum;
+    var file = (res && res.file) || '/tmp/rm520n/events.log';
+
+    var byVerdict = Object.keys(s.outages).map(function(v) {
+        return s.outages[v] + '× ' + verdictLabel(v);
+    }).join(', ');
+
+    var rows = a.events.slice(-100).reverse().map(function(e) {
+        return E('tr', {}, [
+            E('td', {}, fmtTime(e.t)),
+            E('td', { 'class': e.cls }, e.label),
+            E('td', {}, e.details)
+        ]);
+    });
+
+    return E('div', {}, [
+        E('table', { 'class': 'rm-table' }, [
+            E('tr', {}, [
+                E('td', {}, _('Outages (24 h)')),
+                E('td', { 'class': s.outageCount ? 'rm-status-err' : 'rm-status-ok' },
+                    String(s.outageCount) + (byVerdict ? ' (' + byVerdict + ')' : ''))
+            ]),
+            E('tr', {}, [
+                E('td', {}, _('Outage time (24 h)')),
+                E('td', {}, fmtDuration(s.outageSec))
+            ]),
+            E('tr', {}, [
+                E('td', {}, _('Only primary host unreachable (24 h)')),
+                E('td', {}, String(s.targetOnly))
+            ]),
+            E('tr', {}, [
+                E('td', {}, _('Cell changes (24 h)')),
+                E('td', {}, String(s.cellChanges))
+            ]),
+            E('tr', {}, [
+                E('td', {}, _('Recovery actions (24 h)')),
+                E('td', {}, String(s.actions))
+            ]),
+            E('tr', {}, [
+                E('td', {}, _('Log file')),
+                E('td', {}, [ file,
+                    file.indexOf('/tmp/') === 0
+                        ? E('div', { 'class': 'rm-hint' }, _('In RAM, cleared on reboot. Set an event log directory above to keep it.'))
+                        : '' ])
+            ])
+        ]),
+        E('div', { 'class': 'rm-history rm-events', 'style': 'margin-top:10px' },
+            rows.length ? [ E('table', {}, rows) ]
+                        : [ E('div', { 'class': 'rm-history-empty' }, _('No events recorded yet.')) ])
+    ]);
+}
+
+function refreshEvents() {
+    return callGetEvents().then(function(res) {
+        var el = document.getElementById('wd-events');
+        if (!el) return;
+        while (el.firstChild) el.removeChild(el.firstChild);
+        el.appendChild(buildEventsBlock(res));
+    });
+}
 
 function fmtRelativeTime(epochSec) {
     var t = parseInt(epochSec);
@@ -123,11 +295,12 @@ function makeSelect(id, options, current) {
 
 return view.extend({
     load: function() {
-        return callGetConfig();
+        return Promise.all([ callGetConfig(), callGetEvents() ]);
     },
 
-    render: function(d) {
-        d = d || {};
+    render: function(data) {
+        var d = (data && data[0]) || {};
+        var events = data && data[1];
         var wd = d.watchdog || {};
 
         var curAction   = wd.action        || 'reboot_modem';
@@ -195,6 +368,15 @@ return view.extend({
                     ])
                 ]),
                 E('tr', {}, [
+                    E('td', {}, _('Second ping host')),
+                    E('td', {}, [
+                        E('input', { 'type': 'text', 'id': 'wd-host2', 'class': 'rm-input',
+                            'value': wd.ping_host2 || '1.1.1.1' }),
+                        E('div', { 'class': 'rm-hint' },
+                            _('Checked only when the ping host fails. If it answers, the connection works and the failure does not count toward the threshold.'))
+                    ])
+                ]),
+                E('tr', {}, [
                     E('td', {}, _('Poll interval')),
                     E('td', {}, [
                         makeSelect('wd-interval', [
@@ -228,10 +410,20 @@ return view.extend({
                             { v: 'reconnect',     l: ACTION_LABELS['reconnect'] },
                             { v: 'reboot_modem',  l: ACTION_LABELS['reboot_modem'] },
                             { v: 'cascade',       l: ACTION_LABELS['cascade'] },
-                            { v: 'reboot_router', l: ACTION_LABELS['reboot_router'] }
+                            { v: 'reboot_router', l: ACTION_LABELS['reboot_router'] },
+                            { v: 'monitor',       l: ACTION_LABELS['monitor'] }
                         ], curAction),
                         E('div', { 'class': 'rm-hint' },
                             _('Cascade escalates one step per threshold hit: reconnect, then reboot modem, then reboot the whole router.'))
+                    ])
+                ]),
+                E('tr', {}, [
+                    E('td', {}, _('Event log directory')),
+                    E('td', {}, [
+                        E('input', { 'type': 'text', 'id': 'wd-logdir', 'class': 'rm-input',
+                            'placeholder': '/tmp/rm520n', 'value': wd.log_dir || '' }),
+                        E('div', { 'class': 'rm-hint' },
+                            _('Empty = RAM only (/tmp/rm520n). Point it at external storage to keep the log across reboots.'))
                     ])
                 ]),
                 E('tr', {}, [
@@ -255,7 +447,9 @@ return view.extend({
                         var threshold = document.getElementById('wd-threshold').value;
                         var action    = document.getElementById('wd-action').value;
                         var interval  = document.getElementById('wd-interval').value;
-                        callSetConfig(enabled, host, threshold, action, interval).then(function(r) {
+                        var host2     = document.getElementById('wd-host2').value.trim() || '1.1.1.1';
+                        var logDir    = document.getElementById('wd-logdir').value.trim();
+                        callSetConfig(enabled, host, threshold, action, interval, host2, logDir).then(function(r) {
                             if (r && r.error) {
                                 ui.addNotification(null, E('p', r.error), 'error');
                                 return;
@@ -266,6 +460,10 @@ return view.extend({
                                 if (chk) chk.checked = String(w.enabled) === '1';
                                 var h = document.getElementById('wd-host');
                                 if (h) h.value = w.ping_host || '8.8.8.8';
+                                var h2 = document.getElementById('wd-host2');
+                                if (h2) h2.value = w.ping_host2 || '1.1.1.1';
+                                var ld = document.getElementById('wd-logdir');
+                                if (ld) ld.value = w.log_dir || '';
                                 var thr = document.getElementById('wd-threshold');
                                 if (thr) thr.value = String(w.fail_threshold || 3);
                                 var act = document.getElementById('wd-action');
@@ -287,10 +485,12 @@ return view.extend({
                                 ui.addNotification(null,
                                     E('p', _('Saved - enabled: ') + (String(w.enabled) === '1' ? _('yes') : _('no'))
                                         + ', host: ' + (w.ping_host || '8.8.8.8')
+                                        + ', second host: ' + (w.ping_host2 || '1.1.1.1')
                                         + ', every: ' + (w.interval || 10) + 's'
                                         + ', threshold: ' + (w.fail_threshold || 3)
                                         + ', action: ' + (w.action || 'reboot_modem')),
                                     'info');
+                                return refreshEvents();
                             });
                         });
                     }
@@ -312,14 +512,28 @@ return view.extend({
                                 hi.appendChild(buildHistoryBlock(w.history));
                             }
                         });
+                        refreshEvents();
                     }
                 }, _('Refresh Status')),
             ]),
         ]);
 
+        var eventsCard = E('div', { 'class': 'rm-card' }, [
+            E('h3', {}, _('Connection Log')),
+            E('div', { 'class': 'rm-hint', 'style': 'margin:0 0 10px' },
+                _('Written by the watchdog: outages classified by what was still reachable, recovery actions, and serving cell changes (checked every 60 s).')),
+            E('div', { 'id': 'wd-events' }, [ buildEventsBlock(events) ]),
+            E('div', { 'class': 'rm-controls' }, [
+                E('button', { 'class': 'rm-btn rm-btn-default',
+                    'click': function() { refreshEvents(); }
+                }, _('Refresh Log'))
+            ])
+        ]);
+
         return E('div', { 'id': 'rm520n-view' }, [
             E('style', {}, CSS),
             watchdogCard,
+            eventsCard,
             actionsCard,
         ]);
     },

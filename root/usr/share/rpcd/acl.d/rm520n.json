@@ -4,7 +4,7 @@
     "read": {
       "ubus": {
         "session": [ "access", "login" ],
-        "rm520n": [ "full_status", "refresh", "status", "signal", "cell", "bands", "get_config" ]
+        "rm520n": [ "full_status", "refresh", "status", "signal", "cell", "bands", "get_config", "get_events" ]
       }
     },
     "write": {

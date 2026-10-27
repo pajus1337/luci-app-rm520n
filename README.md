@@ -33,7 +33,8 @@ When the RM520NGL modem operates in **PCIe/GbE mode** (via the Waveshare carrier
 - **APN configuration** - change APN without touching UCI
 - **Reconnect** - soft reconnect (CFUN=4 → CFUN=1, ~5 s downtime) with confirmation dialog
 - **Modem reboot** - full restart (CFUN=1,1, ~20 s) with confirmation dialog
-- **Connectivity watchdog** - procd daemon pings a configurable host; on repeated failure runs reconnect, modem reboot, a 3-stage cascade (reconnect → reboot modem → reboot router), or a router reboot outright. Settings shows live status, time since last successful check, and a scrollable event history (with a signal snapshot logged at each action) so failures can be correlated with signal quality
+- **Connectivity watchdog** - procd daemon pings a configurable host; on repeated failure runs reconnect, modem reboot, a 3-stage cascade (reconnect → reboot modem → reboot router), or a router reboot outright, or only monitors. Tools shows live status, time since last successful check, and a scrollable event history (with a signal snapshot logged at each action) so failures can be correlated with signal quality
+- **Connection log** - every outage is classified by what was still reachable (modem/board, mobile data, or only the ping host), with its duration, the serving cell at that moment, recovery actions and serving cell changes; 24 h summary on the Tools page
 
 ---
 
@@ -101,7 +102,8 @@ LuCI browser (JavaScript view)
 |---|---|
 | `root/usr/libexec/rpcd/rm520n` | Shell script backend - handles JSON-RPC calls, queries modem via AT |
 | `htdocs/.../view/rm520n/overview.js` | LuCI JavaScript view - cards, signal bars, controls, auto-refresh |
-| `htdocs/.../view/rm520n/settings.js` | LuCI JavaScript view - watchdog configuration, status, event history |
+| `htdocs/.../view/rm520n/tools.js` | LuCI JavaScript view - watchdog configuration and status, connection log, manual reconnect/reboot |
+| `htdocs/.../view/rm520n/settings.js` | LuCI JavaScript view - band configuration, network mode, APN |
 | `root/usr/sbin/rm520n-watchdog` | Connectivity watchdog daemon (procd-managed) |
 | `root/etc/init.d/rm520n-watchdog` | procd init script for the watchdog daemon |
 | `root/usr/share/luci/menu.d/rm520n.json` | Registers the page under Network menu |
@@ -124,7 +126,8 @@ LuCI browser (JavaScript view)
 | `reboot_modem` | write | Full modem restart (`AT+CFUN=1,1`) |
 | `reset_counters` | write | Reset modem data counters (`AT+QGDCNT=0,0`) |
 | `get_config` | read | Watchdog config, status, last successful check, event history |
-| `set_config` | write | Update watchdog config (host, interval, threshold, action) and (re)start the daemon |
+| `set_config` | write | Update watchdog config (hosts, interval, threshold, action, log directory) and (re)start the daemon |
+| `get_events` | read | Connection log written by the watchdog (outages, actions, cell changes) |
 
 ---
 
@@ -139,6 +142,7 @@ interval and counts consecutive failures. Once the failure threshold is reached 
 | `reboot_modem` | Full modem restart (`AT+CFUN=1,1`) |
 | `cascade` | Escalates one stage per threshold hit: reconnect → reboot modem → reboot router |
 | `reboot_router` | Full OpenWrt reboot |
+| `monitor` | No action, only the connection log below |
 
 Detection time is `interval × threshold` at minimum (e.g. 10 s × 3 = ~30 s) - a little more under
 packet loss, since each failed check itself waits on ping timeouts. Every triggered action is
@@ -153,8 +157,27 @@ watchdog logs this once and skips the action instead of escalating. That include
 `reboot_router`, since a router reboot cannot restore a missing driver. Monitoring continues, and
 actions resume as soon as the port is back.
 
-Configure it under **Network → 5G Modem (RM520N) → Settings**, where you can also see time since
+Configure it under **Network → 5G Modem (RM520N) → Tools**, where you can also see time since
 the last successful check and a scrollable history of recent watchdog events.
+
+### Connection log
+
+When a check fails, the watchdog also pings the local gateway and a second host (default
+`1.1.1.1`) to classify the failure:
+
+| Verdict | Meaning |
+|---|---|
+| Modem/board unreachable | The gateway (modem side of the GbE link) does not answer |
+| No default route | WAN has no default route, e.g. DHCP lease lost |
+| Mobile data down | Gateway answers, both hosts do not |
+| Only primary host unreachable | The second host answers, so the connection works |
+
+The last case is logged but does not count toward the failure threshold, since no recovery action
+could fix it. Outages (start, verdict, serving cell, duration), recovery actions and serving cell
+changes (checked every 60 s) are written to `/tmp/rm520n/events.log` (last 300 events, in RAM).
+Set **Event log directory** to a path on external storage to keep the log across reboots. The
+Tools page shows a 24 h summary and the latest events. Pick the `monitor` action to get only the
+log, with no automatic recovery.
 
 ## Signal Quality Reference
 
