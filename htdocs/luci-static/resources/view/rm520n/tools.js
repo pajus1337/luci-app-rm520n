@@ -8,7 +8,7 @@ var callReboot     = rpc.declare({ object: 'rm520n', method: 'reboot_modem' });
 var callGetConfig  = rpc.declare({ object: 'rm520n', method: 'get_config', expect: {} });
 var callGetEvents  = rpc.declare({ object: 'rm520n', method: 'get_events', expect: {} });
 var callSetConfig  = rpc.declare({ object: 'rm520n', method: 'set_config',
-    params: ['enabled', 'ping_host', 'fail_threshold', 'action', 'interval', 'ping_host2', 'log_dir'] });
+    params: ['enabled', 'ping_host', 'fail_threshold', 'action', 'interval', 'ping_host2', 'log_dir', 'events_max', 'cell_log'] });
 
 var CSS =
     '#rm520n-view{'
@@ -425,6 +425,28 @@ return view.extend({
                     ])
                 ]),
                 E('tr', {}, [
+                    E('td', {}, _('Event log size')),
+                    E('td', {}, [
+                        makeSelect('wd-events-max', [ 300, 1000, 2000, 5000, 10000 ].map(function(n) {
+                            return { v: String(n), l: N_(n, '%d line', '%d lines').format(n) };
+                        }), String(wd.events_max || 2000)),
+                        E('div', { 'class': 'rm-hint' },
+                            _('Oldest lines are dropped beyond this. 2000 lines are roughly 200 KB and usually cover several weeks.'))
+                    ])
+                ]),
+                E('tr', {}, [
+                    E('td', {}, _('Serving cell changes')),
+                    E('td', {}, [
+                        makeSelect('wd-cell-log', [
+                            { v: 'stable', l: _('Log stable changes') },
+                            { v: 'all',    l: _('Log every change') },
+                            { v: 'off',    l: _('Do not log') }
+                        ], wd.cell_log || 'stable'),
+                        E('div', { 'class': 'rm-hint' },
+                            _('Stable: a new primary cell is logged only when it is still there one check (60 s) later. This hides short carrier aggregation swaps.'))
+                    ])
+                ]),
+                E('tr', {}, [
                     E('td', {}, _('Status')),
                     E('td', { 'id': 'wd-status' }, [ statusText(wd) ])
                 ]),
@@ -447,7 +469,9 @@ return view.extend({
                         var interval  = document.getElementById('wd-interval').value;
                         var host2     = document.getElementById('wd-host2').value.trim() || '1.1.1.1';
                         var logDir    = document.getElementById('wd-logdir').value.trim();
-                        callSetConfig(enabled, host, threshold, action, interval, host2, logDir).then(function(r) {
+                        var eventsMax = document.getElementById('wd-events-max').value;
+                        var cellLog   = document.getElementById('wd-cell-log').value;
+                        callSetConfig(enabled, host, threshold, action, interval, host2, logDir, eventsMax, cellLog).then(function(r) {
                             if (r && r.error) {
                                 ui.addNotification(null, E('p', r.error), 'error');
                                 return;
@@ -462,6 +486,10 @@ return view.extend({
                                 if (h2) h2.value = w.ping_host2 || '1.1.1.1';
                                 var ld = document.getElementById('wd-logdir');
                                 if (ld) ld.value = w.log_dir || '';
+                                var em = document.getElementById('wd-events-max');
+                                if (em) em.value = String(w.events_max || 2000);
+                                var cl = document.getElementById('wd-cell-log');
+                                if (cl) cl.value = w.cell_log || 'stable';
                                 var thr = document.getElementById('wd-threshold');
                                 if (thr) thr.value = String(w.fail_threshold || 3);
                                 var act = document.getElementById('wd-action');

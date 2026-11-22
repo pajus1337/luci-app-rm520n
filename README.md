@@ -197,7 +197,10 @@ When a check fails, the watchdog also pings the local gateway and a second host 
 
 The last case is logged but does not count toward the failure threshold, since no recovery action
 could fix it. Outages (start, verdict, serving cell, duration), recovery actions and serving cell
-changes (checked every 60 s) are written to `/tmp/rm520n/events.log` (last 300 events, in RAM).
+changes (checked every 60 s) are written to `/tmp/rm520n/events.log` (in RAM). **Event log size**
+sets how many lines are kept (default 2000, about 200 KB). **Serving cell changes** decides which
+cell changes are logged: by default only stable ones, i.e. a new primary cell that is still there
+one check later, because carrier aggregation often swaps the primary for a single check and back.
 Set **Event log directory** to a path on external storage to keep the log across reboots. The
 Tools page shows a 24 h summary and the latest events. Pick the `monitor` action to get only the
 log, with no automatic recovery.

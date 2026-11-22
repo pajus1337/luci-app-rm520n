@@ -14,6 +14,12 @@ msgid_plural "%d consecutive failures"
 msgstr[0] "%d Fehlschlag in Folge"
 msgstr[1] "%d Fehlschläge in Folge"
 
+#: htdocs/luci-static/resources/view/rm520n/tools.js:431
+msgid "%d line"
+msgid_plural "%d lines"
+msgstr[0] "%d Zeile"
+msgstr[1] "%d Zeilen"
+
 #: htdocs/luci-static/resources/view/rm520n/tools.js:246
 msgid "%dd ago"
 msgstr "vor %d Tg."
@@ -161,7 +167,7 @@ msgstr "Zelleninfo"
 msgid "Checked only when the ping host fails. If it answers, the connection works and the failure does not count toward the threshold."
 msgstr "Wird nur geprüft, wenn der Ping-Host nicht antwortet. Antwortet dieser, funktioniert die Verbindung und der Fehler zählt nicht zur Schwelle."
 
-#: htdocs/luci-static/resources/view/rm520n/tools.js:518
+#: htdocs/luci-static/resources/view/rm520n/tools.js:546
 msgid "Connection Log"
 msgstr "Verbindungsprotokoll"
 
@@ -185,6 +191,10 @@ msgstr "Diese Nachricht vom Modem löschen? Das kann nicht rückgängig gemacht 
 #: htdocs/luci-static/resources/view/rm520n/tools.js:272
 msgid "Disabled"
 msgstr "Deaktiviert"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:443
+msgid "Do not log"
+msgstr "Nicht protokollieren"
 
 #: htdocs/luci-static/resources/view/rm520n/overview.js:399
 msgid "Duplex"
@@ -217,6 +227,10 @@ msgstr "Sitzung beenden"
 #: htdocs/luci-static/resources/view/rm520n/tools.js:419
 msgid "Event log directory"
 msgstr "Verzeichnis für das Ereignisprotokoll"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:428
+msgid "Event log size"
+msgstr "Größe des Ereignisprotokolls"
 
 #: htdocs/luci-static/resources/view/rm520n/tools.js:401
 msgid "Example: 10 s × 3 = ~30 s minimum; each failed check can add a few seconds more."
@@ -258,13 +272,21 @@ msgstr "Im RAM, wird beim Neustart gelöscht. Oben ein Verzeichnis für das Erei
 msgid "incomplete %d/%d"
 msgstr "unvollständig %d/%d"
 
-#: htdocs/luci-static/resources/view/rm520n/tools.js:432
+#: htdocs/luci-static/resources/view/rm520n/tools.js:454
 msgid "Last successful check"
 msgstr "Letzte erfolgreiche Prüfung"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:442
+msgid "Log every change"
+msgstr "Jeden Wechsel protokollieren"
 
 #: htdocs/luci-static/resources/view/rm520n/tools.js:217
 msgid "Log file"
 msgstr "Protokolldatei"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:441
+msgid "Log stable changes"
+msgstr "Stabile Wechsel protokollieren"
 
 #: htdocs/luci-static/resources/view/rm520n/settings.js:109
 msgid "LTE Bands"
@@ -330,7 +352,7 @@ msgstr "nie"
 msgid "new"
 msgstr "neu"
 
-#: htdocs/luci-static/resources/view/rm520n/tools.js:485
+#: htdocs/luci-static/resources/view/rm520n/tools.js:513
 msgid "no"
 msgstr "nein"
 
@@ -367,6 +389,10 @@ msgstr "NR-Bänder"
 #: htdocs/luci-static/resources/view/rm520n/settings.js:160
 msgid "NR bands applied."
 msgstr "NR-Bänder übernommen."
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:434
+msgid "Oldest lines are dropped beyond this. 2000 lines are roughly 200 KB and usually cover several weeks."
+msgstr "Darüber hinaus werden die ältesten Zeilen entfernt. 2000 Zeilen sind etwa 200 KB und reichen meist für mehrere Wochen."
 
 #: htdocs/luci-static/resources/view/rm520n/tools.js:78
 msgid "Only primary host unreachable"
@@ -433,7 +459,7 @@ msgstr "Modem neu starten (AT+CFUN=1,1, ca. 40-45 s)"
 msgid "Reboot router (full OpenWrt restart, ~60 s)"
 msgstr "Router neu starten (kompletter OpenWrt-Neustart, ca. 60 s)"
 
-#: htdocs/luci-static/resources/view/rm520n/tools.js:436
+#: htdocs/luci-static/resources/view/rm520n/tools.js:458
 msgid "Recent events"
 msgstr "Letzte Ereignisse"
 
@@ -471,7 +497,7 @@ msgstr "Wiederherstellungsaktionen (24 h)"
 msgid "Refresh"
 msgstr "Aktualisieren"
 
-#: htdocs/luci-static/resources/view/rm520n/tools.js:525
+#: htdocs/luci-static/resources/view/rm520n/tools.js:553
 msgid "Refresh Log"
 msgstr "Protokoll aktualisieren"
 
@@ -479,7 +505,7 @@ msgstr "Protokoll aktualisieren"
 msgid "Refresh Now"
 msgstr "Jetzt aktualisieren"
 
-#: htdocs/luci-static/resources/view/rm520n/tools.js:513
+#: htdocs/luci-static/resources/view/rm520n/tools.js:541
 msgid "Refresh Status"
 msgstr "Status aktualisieren"
 
@@ -508,11 +534,11 @@ msgstr "RX"
 msgid "RX Speed"
 msgstr "RX-Rate"
 
-#: htdocs/luci-static/resources/view/rm520n/tools.js:493
+#: htdocs/luci-static/resources/view/rm520n/tools.js:521
 msgid "Save"
 msgstr "Speichern"
 
-#: htdocs/luci-static/resources/view/rm520n/tools.js:484
+#: htdocs/luci-static/resources/view/rm520n/tools.js:512
 msgid "Saved - enabled: %s, host: %s, second host: %s, every: %ss, threshold: %s, action: %s"
 msgstr "Gespeichert - aktiviert: %s, Host: %s, zweiter Host: %s, alle: %s s, Schwelle: %s, Aktion: %s"
 
@@ -531,6 +557,10 @@ msgstr "Senden Sie einen Code an Ihren Betreiber, z. B. eine Guthabenabfrage. Di
 #: htdocs/luci-static/resources/view/rm520n/tools.js:150
 msgid "Serving cell"
 msgstr "Versorgende Zelle"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:438
+msgid "Serving cell changes"
+msgstr "Wechsel der versorgenden Zelle"
 
 #: htdocs/luci-static/resources/view/rm520n/messages.js:259
 msgid "Session closed by the network."
@@ -556,7 +586,11 @@ msgstr "SMS-Posteingang"
 msgid "Soft reconnect (CFUN=4 → CFUN=1). Connection will drop for ~5 seconds."
 msgstr "Sanfte Neuverbindung (CFUN=4 → CFUN=1). Die Verbindung fällt für ca. 5 Sekunden aus."
 
-#: htdocs/luci-static/resources/view/rm520n/tools.js:428
+#: htdocs/luci-static/resources/view/rm520n/tools.js:446
+msgid "Stable: a new primary cell is logged only when it is still there one check (60 s) later. This hides short carrier aggregation swaps."
+msgstr "Stabil: Eine neue primäre Zelle wird erst protokolliert, wenn sie bei der nächsten Prüfung (60 s später) noch aktiv ist. So werden kurze Wechsel innerhalb der Carrier Aggregation ausgeblendet."
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:450
 msgid "Status"
 msgstr "Status"
 
@@ -612,10 +646,10 @@ msgstr "Sehr gut"
 msgid "Waiting for the network..."
 msgstr "Warten auf das Netz..."
 
-#: htdocs/luci-static/resources/view/rm520n/tools.js:520
+#: htdocs/luci-static/resources/view/rm520n/tools.js:548
 msgid "Written by the watchdog: outages classified by what was still reachable, recovery actions, and serving cell changes (checked every 60 s)."
 msgstr "Vom Watchdog geschrieben: Ausfälle, eingeteilt danach, was noch erreichbar war, Wiederherstellungsaktionen und Wechsel der versorgenden Zelle (alle 60 s geprüft)."
 
-#: htdocs/luci-static/resources/view/rm520n/tools.js:485
+#: htdocs/luci-static/resources/view/rm520n/tools.js:513
 msgid "yes"
 msgstr "ja"

@@ -14,7 +14,6 @@ STAGE_FILE="/tmp/rm520n_watchdog_stage"
 LAST_OK_FILE="/tmp/rm520n_watchdog_last_ok"
 COUNTERS_FILE="/tmp/rm520n_watchdog_counters"
 NO_MODEM_FILE="/tmp/rm520n_watchdog_no_modem"
-EVENTS_MAX=300
 CELL_EVERY=60
 
 _cfg() { uci -q get "rm520n.watchdog.$1" 2>/dev/null; }
@@ -115,8 +114,8 @@ _modem_ready() {
 
 _event() {
     printf '%s %s\n' "$(date +%s)" "$*" >> "$EVENTS"
-    if [ "$(wc -l < "$EVENTS")" -gt "$EVENTS_MAX" ]; then
-        tail -n "$EVENTS_MAX" "$EVENTS" > "$EVENTS.tmp" && mv "$EVENTS.tmp" "$EVENTS"
+    if [ "$(wc -l < "$EVENTS")" -gt "$events_max" ]; then
+        tail -n "$events_max" "$EVENTS" > "$EVENTS.tmp" && mv "$EVENTS.tmp" "$EVENTS"
     fi
 }
 
@@ -139,11 +138,23 @@ _cell_state() {
     cell_signal="scc=${scc:-none} rsrp=${rsrp:-?} sinr=${sinr:-?}"
 }
 
+# In "stable" mode a new primary cell is logged only once it is seen on two
+# checks in a row: carrier aggregation often swaps the primary to another
+# carrier for a single check and back, which would flood the log.
 _check_cell() {
+    [ "$cell_log" = "off" ] && return
     _cell_state || return
-    [ "$cell_sig" = "$last_cell" ] && return
+    if [ "$cell_sig" = "$last_cell" ]; then
+        cell_pending=""
+        return
+    fi
+    if [ "$cell_log" != "all" ] && [ "$cell_sig" != "$cell_pending" ]; then
+        cell_pending="$cell_sig"
+        return
+    fi
     _event "cell $cell_sig $cell_signal"
     last_cell="$cell_sig"
+    cell_pending=""
 }
 
 _classify_failure() {
@@ -209,6 +220,7 @@ _trigger_reboot_router() {
 incident=""
 incident_start=0
 last_cell=""
+cell_pending=""
 next_cell=0
 
 while true; do
@@ -222,6 +234,8 @@ while true; do
     interval="$(_cfg interval)";     interval="${interval:-10}"
     host2="$(_cfg ping_host2)";      host2="${host2:-1.1.1.1}"
     log_dir="$(_cfg log_dir)";       EVENTS="${log_dir:-/tmp/rm520n}/events.log"
+    events_max="$(_cfg events_max)"; events_max="${events_max:-2000}"
+    cell_log="$(_cfg cell_log)";     cell_log="${cell_log:-stable}"
     mkdir -p "${EVENTS%/*}"
 
     if [ "$(date +%s)" -ge "$next_cell" ]; then

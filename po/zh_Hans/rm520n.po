@@ -17,6 +17,11 @@ msgid "%d consecutive failure"
 msgid_plural "%d consecutive failures"
 msgstr[0] ""
 
+#: htdocs/luci-static/resources/view/rm520n/tools.js:431
+msgid "%d line"
+msgid_plural "%d lines"
+msgstr[0] ""
+
 #: htdocs/luci-static/resources/view/rm520n/tools.js:246
 msgid "%dd ago"
 msgstr ""
@@ -164,7 +169,7 @@ msgstr "小区信息"
 msgid "Checked only when the ping host fails. If it answers, the connection works and the failure does not count toward the threshold."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/rm520n/tools.js:518
+#: htdocs/luci-static/resources/view/rm520n/tools.js:546
 msgid "Connection Log"
 msgstr ""
 
@@ -187,6 +192,10 @@ msgstr ""
 
 #: htdocs/luci-static/resources/view/rm520n/tools.js:272
 msgid "Disabled"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:443
+msgid "Do not log"
 msgstr ""
 
 #: htdocs/luci-static/resources/view/rm520n/overview.js:399
@@ -219,6 +228,10 @@ msgstr ""
 
 #: htdocs/luci-static/resources/view/rm520n/tools.js:419
 msgid "Event log directory"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:428
+msgid "Event log size"
 msgstr ""
 
 #: htdocs/luci-static/resources/view/rm520n/tools.js:401
@@ -261,12 +274,20 @@ msgstr ""
 msgid "incomplete %d/%d"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/rm520n/tools.js:432
+#: htdocs/luci-static/resources/view/rm520n/tools.js:454
 msgid "Last successful check"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:442
+msgid "Log every change"
 msgstr ""
 
 #: htdocs/luci-static/resources/view/rm520n/tools.js:217
 msgid "Log file"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:441
+msgid "Log stable changes"
 msgstr ""
 
 #: htdocs/luci-static/resources/view/rm520n/settings.js:109
@@ -333,7 +354,7 @@ msgstr ""
 msgid "new"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/rm520n/tools.js:485
+#: htdocs/luci-static/resources/view/rm520n/tools.js:513
 msgid "no"
 msgstr ""
 
@@ -370,6 +391,10 @@ msgstr "NR 频段"
 #: htdocs/luci-static/resources/view/rm520n/settings.js:160
 msgid "NR bands applied."
 msgstr "NR 频段已应用。"
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:434
+msgid "Oldest lines are dropped beyond this. 2000 lines are roughly 200 KB and usually cover several weeks."
+msgstr ""
 
 #: htdocs/luci-static/resources/view/rm520n/tools.js:78
 msgid "Only primary host unreachable"
@@ -436,7 +461,7 @@ msgstr ""
 msgid "Reboot router (full OpenWrt restart, ~60 s)"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/rm520n/tools.js:436
+#: htdocs/luci-static/resources/view/rm520n/tools.js:458
 msgid "Recent events"
 msgstr ""
 
@@ -474,7 +499,7 @@ msgstr ""
 msgid "Refresh"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/rm520n/tools.js:525
+#: htdocs/luci-static/resources/view/rm520n/tools.js:553
 msgid "Refresh Log"
 msgstr ""
 
@@ -482,7 +507,7 @@ msgstr ""
 msgid "Refresh Now"
 msgstr "立即刷新"
 
-#: htdocs/luci-static/resources/view/rm520n/tools.js:513
+#: htdocs/luci-static/resources/view/rm520n/tools.js:541
 msgid "Refresh Status"
 msgstr ""
 
@@ -511,11 +536,11 @@ msgstr ""
 msgid "RX Speed"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/rm520n/tools.js:493
+#: htdocs/luci-static/resources/view/rm520n/tools.js:521
 msgid "Save"
 msgstr ""
 
-#: htdocs/luci-static/resources/view/rm520n/tools.js:484
+#: htdocs/luci-static/resources/view/rm520n/tools.js:512
 msgid "Saved - enabled: %s, host: %s, second host: %s, every: %ss, threshold: %s, action: %s"
 msgstr ""
 
@@ -533,6 +558,10 @@ msgstr ""
 
 #: htdocs/luci-static/resources/view/rm520n/tools.js:150
 msgid "Serving cell"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:438
+msgid "Serving cell changes"
 msgstr ""
 
 #: htdocs/luci-static/resources/view/rm520n/messages.js:259
@@ -559,7 +588,11 @@ msgstr ""
 msgid "Soft reconnect (CFUN=4 → CFUN=1). Connection will drop for ~5 seconds."
 msgstr "软重连（CFUN=4 → CFUN=1），网络将中断约 5 秒。"
 
-#: htdocs/luci-static/resources/view/rm520n/tools.js:428
+#: htdocs/luci-static/resources/view/rm520n/tools.js:446
+msgid "Stable: a new primary cell is logged only when it is still there one check (60 s) later. This hides short carrier aggregation swaps."
+msgstr ""
+
+#: htdocs/luci-static/resources/view/rm520n/tools.js:450
 msgid "Status"
 msgstr ""
 
@@ -615,10 +648,10 @@ msgstr "信号很好"
 msgid "Waiting for the network..."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/rm520n/tools.js:520
+#: htdocs/luci-static/resources/view/rm520n/tools.js:548
 msgid "Written by the watchdog: outages classified by what was still reachable, recovery actions, and serving cell changes (checked every 60 s)."
 msgstr ""
 
-#: htdocs/luci-static/resources/view/rm520n/tools.js:485
+#: htdocs/luci-static/resources/view/rm520n/tools.js:513
 msgid "yes"
 msgstr ""
